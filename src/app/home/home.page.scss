@@ -1,0 +1,31 @@
+.login-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  
+  // Centrado vertical
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+
+  .logo {
+    max-width: 150px;
+    margin: 0 auto 30px;
+    display: block;
+  }
+}
+
+// Estilos para modo oscuro
+@media (prefers-color-scheme: dark) {
+  .login-container {
+    background: var(--ion-color-step-100);
+  }
+  
+  ion-input {
+    --background: var(--ion-color-step-150) !important;
+    --color: white !important;
+  }
+}

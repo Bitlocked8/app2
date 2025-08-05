@@ -1,0 +1,58 @@
+<ion-content class="ion-padding" color="light">
+  <div class="login-container">
+    <ion-img src="assets/logo.png" class="logo" *ngIf="!isLoading"></ion-img>
+    
+    <!-- Spinner mientras carga -->
+    <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+
+    <form *ngIf="!isLoading" (ngSubmit)="login()">
+      <ion-item class="ion-margin-bottom">
+        <ion-label position="floating">Email</ion-label>
+        <ion-input 
+          [(ngModel)]="email" 
+          name="email"
+          type="email" 
+          fill="solid"
+          placeholder="tu@email.com"
+          required>
+        </ion-input>
+      </ion-item>
+
+      <ion-item class="ion-margin-bottom">
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input 
+          [(ngModel)]="password" 
+          name="password"
+          [type]="showPassword ? 'text' : 'password'" 
+          fill="solid"
+          placeholder="••••••••"
+          required>
+        </ion-input>
+        <ion-button fill="clear" slot="end" (click)="showPassword = !showPassword">
+          <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <!-- Mensaje de error -->
+      <ion-text *ngIf="errorMessage" color="danger" class="ion-text-center">
+        <p>{{ errorMessage }}</p>
+      </ion-text>
+
+      <ion-button 
+        expand="block" 
+        type="submit"
+        class="ion-margin-top">
+        Login
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        color="danger" 
+        class="ion-margin-top"
+        (click)="loginWithGoogle()">
+        <ion-icon slot="start" name="logo-google"></ion-icon>
+        Ingresar con Google (Demo)
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

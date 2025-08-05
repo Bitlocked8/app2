@@ -1,0 +1,96 @@
+.white-header {
+  --background: white;
+  
+  ion-toolbar {
+    --background: white;
+    --color: black;
+    border-bottom: 1px solid #f0f0f0;
+
+    ion-icon {
+      color: black !important;
+    }
+  }
+}
+
+.white-content {
+  --background: white;
+  padding-bottom: 80px;
+}
+
+.white-card {
+  --background: white;
+  margin: 16px;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+
+  ion-card-header, ion-card-content {
+    --background: white;
+  }
+}
+
+ion-card-title, p {
+  color: black;
+}
+
+.dropdown-menu {
+  position: fixed;
+  bottom: 60px;
+  right: 16px;
+  width: 200px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  transform: scale(0.95);
+  transform-origin: bottom right;
+  opacity: 0;
+  transition: all 0.2s ease;
+  overflow: hidden;
+
+  &.show {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  ion-list {
+    padding: 0;
+    --ion-item-background: white;
+  }
+
+  ion-item {
+    --min-height: 48px;
+    --background: white;
+    --color: black;
+    border-bottom: 1px solid #f5f5f5;
+
+    ion-icon {
+      color: black !important;
+    }
+  }
+}
+
+ion-tab-bar {
+  --background: white;
+  --border: 1px solid #e0e0e0;
+  padding: 8px 0;
+
+  ion-tab-button {
+    --color: #666;
+    --color-selected: #3880ff;
+
+    ion-icon {
+      font-size: 24px;
+      color: black !important;
+    }
+  }
+}
+
+/* Estilos para la alerta de confirmación */
+.alert-button-cancel {
+  color: var(--ion-color-medium) !important;
+}
+
+.alert-button-confirm {
+  color: var(--ion-color-danger) !important;
+  font-weight: bold;
+}
