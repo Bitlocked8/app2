@@ -1,72 +1,67 @@
-import { Component, inject, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, HostListener, inject } from '@angular/core';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonIcon, IonCard, IonCardHeader,
-  IonCardTitle, IonCardContent, IonLabel,
-  IonTabs, IonTabBar, IonTabButton, IonList, IonItem,
+  IonIcon,
+  IonLabel,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
   AlertController
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { logOut, ellipsisVertical, home, water } from 'ionicons/icons';
+import { cart, search, logOut, home, water } from 'ionicons/icons';
 
 interface User {
   email: string;
   name: string;
-  provider?: string;
 }
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  templateUrl: 'dashboard.page.html',
   standalone: true,
-  imports: [
-    IonHeader, IonToolbar, IonTitle,
-    IonContent, IonIcon,
-    IonCard, IonCardHeader, IonCardTitle,
-    IonCardContent, IonLabel,
-    IonTabs, IonTabBar, IonTabButton,
-    IonList, IonItem
-  ]
+  imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
 })
 export class DashboardPage {
-  private alertCtrl = inject(AlertController); // 👈 Inyecta AlertController
-
+  private alertCtrl = inject(AlertController);
   private router = inject(Router);
+
   user: User = { email: '', name: '' };
-  showMenu = false;
 
   constructor() {
-    addIcons({ logOut, ellipsisVertical, home, water });
+    addIcons({ cart, search, logOut, home, water });
+    this.checkAuth();
+  }
 
+  private checkAuth() {
     const authData = localStorage.getItem('fakeAuth');
     if (!authData) {
       this.router.navigate(['/home'], { replaceUrl: true });
-      return;
+    } else {
+      this.user = JSON.parse(authData).user;
     }
-
-    this.user = JSON.parse(authData).user;
   }
 
-  toggleMenu(event: Event) {
-    event.stopPropagation();
-    this.showMenu = !this.showMenu;
-  }
+  async logout() {
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Estás seguro de que quieres salir?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Salir',
+          handler: () => {
+            localStorage.removeItem('fakeAuth');
+            this.router.navigate(['/home'], { replaceUrl: true });
+          }
+        }
+      ]
+    });
 
-  logout() {
-    localStorage.removeItem('fakeAuth');
-    this.router.navigate(['/home'], { replaceUrl: true });
-    this.showMenu = false;
-  }
-
-  openWaterProducts() {
-    this.router.navigate(['/products/water']);
-    this.showMenu = false;
-  }
-
-  @HostListener('document:click')
-  closeMenu() {
-    this.showMenu = false;
+    await alert.present();
   }
 }

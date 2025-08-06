@@ -1,0 +1,12 @@
+/* En compras.page.scss y search.page.scss */
+:host {
+  ion-content {
+    --background: white;
+    color: black; /* Color de texto general */
+  }
+
+  /* Estilo para elementos específicos */
+  ion-item, ion-button, ion-input {
+    --color: black;
+  }
+}
