@@ -1,11 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { notificationsOutline } from 'ionicons/icons';
+addIcons({
+  'notifications-outline': notificationsOutline,
+});
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
+  IonIcon,
+  IonButton,
   IonGrid,
   IonRow,
   IonCol,
@@ -14,6 +21,7 @@ import {
   IonCardTitle,
   IonCardContent,
   IonInfiniteScroll,
+  IonSearchbar,
   IonInfiniteScrollContent
 } from '@ionic/angular/standalone';
 
@@ -29,6 +37,9 @@ import {
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonButton,
+    IonIcon,
+    IonSearchbar,
     IonGrid,
     IonRow,
     IonCol,
@@ -40,7 +51,7 @@ import {
     IonInfiniteScrollContent,
   ],
 })
-export class ComprasPage {
+export class ComprasPage implements OnInit {
   productos = Array.from({ length: 10 }).map((_, i) => ({
     id: i,
     nombre: `Agua embotellada ${i + 1}L`,
@@ -50,20 +61,44 @@ export class ComprasPage {
     reputacion: '⭐⭐⭐⭐☆',
   }));
 
+  productosFiltrados: any[] = [];
+
+  busqueda = '';
+
+  ngOnInit() {
+    // Inicializa la lista filtrada con todos los productos
+    this.productosFiltrados = [...this.productos];
+  }
+
+  filtrarProductos() {
+    const query = this.busqueda.toLowerCase().trim();
+    this.productosFiltrados = this.productos.filter(p =>
+      p.nombre.toLowerCase().includes(query)
+    );
+  }
+
   loadData(event: any) {
     setTimeout(() => {
       const next = this.productos.length;
-      this.productos.push(
-        ...Array.from({ length: 5 }).map((_, i) => ({
-          id: next + i,
-          nombre: `Agua embotellada ${next + i + 1}L`,
-          precio: (5 + next + i).toFixed(2),
-          imagen: `https://picsum.photos/200/200?random=${next + i}`,
-          vendedor: 'Agua Fresh',
-          reputacion: '⭐⭐⭐⭐☆',
-        }))
-      );
+      const nuevos = Array.from({ length: 5 }).map((_, i) => ({
+        id: next + i,
+        nombre: `Agua embotellada ${next + i + 1}L`,
+        precio: (5 + next + i).toFixed(2),
+        imagen: `https://picsum.photos/200/200?random=${next + i}`,
+        vendedor: 'Agua Fresh',
+        reputacion: '⭐⭐⭐⭐☆',
+      }));
+
+      this.productos.push(...nuevos);
+      this.filtrarProductos(); // Vuelve a aplicar el filtro actual
       event.target.complete();
     }, 1000);
   }
+
+  verNotificaciones() {
+    console.log('🔔 Ver notificaciones');
+    // Aquí podrías abrir un modal o navegar a la página de notificaciones
+  }
+  
+  
 }
