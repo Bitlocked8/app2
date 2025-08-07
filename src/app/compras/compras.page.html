@@ -17,8 +17,8 @@
   <!-- 🧊 Productos -->
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let producto of productosFiltrados">
-        <ion-card class="product-card">
+      <ion-col size="12" *ngFor="let producto of productosFiltrados">
+        <ion-card class="product-card" (click)="verProducto(producto)">
           <img [src]="producto.imagen" alt="agua" />
           <ion-card-header>
             <ion-card-title>{{ producto.nombre }}</ion-card-title>
@@ -30,6 +30,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
+
     </ion-row>
   </ion-grid>
 

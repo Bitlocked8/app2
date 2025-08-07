@@ -1,0 +1,97 @@
+<ion-content class="ion-padding white-background">
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <h2 class="titulo">{{ producto?.nombre }}</h2>
+        <p><strong>Reputación:</strong> ⭐ {{ producto?.reputacion }} ({{ producto?.valoraciones?.length }} valoraciones)</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <p><strong>Antes:</strong> <s>${{ producto?.precioOriginal }}</s></p>
+        <p class="precio-actual"><strong>Ahora:</strong> ${{ producto?.precio }} <ion-badge color="danger">Ahorra ${{ producto?.ahorro }}</ion-badge></p>
+        <p><strong>Vendedor:</strong> {{ producto?.vendedor }}</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-item>
+      <ion-label>Color</ion-label>
+      <ion-select [(ngModel)]="productoSeleccionado.color">
+        <ion-select-option *ngFor="let c of producto?.colores">{{ c }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Bundle</ion-label>
+      <ion-select [(ngModel)]="productoSeleccionado.bundle">
+        <ion-select-option *ngFor="let b of producto?.bundles">{{ b }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Enchufe</ion-label>
+      <ion-select [(ngModel)]="productoSeleccionado.enchufe">
+        <ion-select-option *ngFor="let e of producto?.enchufes">{{ e }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Cantidad</ion-label>
+      <ion-input type="number" [(ngModel)]="productoSeleccionado.cantidad" min="1" [max]="producto?.stock"></ion-input>
+    </ion-item>
+    <p class="disponible">{{ producto?.stock }} disponible(s)</p>
+
+    <ion-row class="ion-margin-top">
+      <ion-col size="6">
+        <ion-button expand="block" fill="outline" color="primary" shape="round" (click)="agregarAlCarrito()">
+          Añadir al carrito
+        </ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button expand="block" fill="solid" color="success" shape="round" (click)="hacerPedido()">
+          Comprar ahora
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-accordion-group>
+      <ion-accordion value="detalles">
+        <ion-item slot="header">
+          <ion-label>Detalles del producto</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <p><strong>Procesador:</strong> {{ producto?.procesador }}</p>
+          <p><strong>Disco:</strong> {{ producto?.disco }}</p>
+          <p><strong>Memoria:</strong> {{ producto?.memoria }}</p>
+          <p><strong>Uso recomendado:</strong> {{ producto?.uso }}</p>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+    <ion-row>
+      <ion-col size="12">
+        <h3 class="comentarios-titulo">Comentarios destacados</h3>
+        <ion-card *ngFor="let comentario of producto?.comentarios?.slice(0, 3)">
+          <ion-card-content>
+            <p><strong>{{ comentario.usuario }}</strong> | {{ comentario.fecha | date }}</p>
+            <p>{{ comentario.texto }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-button size="small" fill="clear" (click)="verTodosLosComentarios()">Ver todos los comentarios</ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <p><strong>Envío:</strong> US ${{ producto?.envio }}</p>
+        <p><strong>Entrega estimada:</strong> {{ producto?.entrega }}</p>
+        <p><strong>Devoluciones:</strong> {{ producto?.politicaDevolucion }}</p>
+      </ion-col>
+    </ion-row>
+
+    
+  </ion-grid>
+
+</ion-content>

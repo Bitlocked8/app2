@@ -22,8 +22,11 @@ import {
   IonCardContent,
   IonInfiniteScroll,
   IonSearchbar,
-  IonInfiniteScrollContent
+  IonInfiniteScrollContent,
+  ModalController // ✅ importado aquí
 } from '@ionic/angular/standalone';
+
+import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/modal-ver-compra-producto.component'; // ✅ ajusta ruta si es diferente
 
 @Component({
   selector: 'app-compras',
@@ -62,11 +65,12 @@ export class ComprasPage implements OnInit {
   }));
 
   productosFiltrados: any[] = [];
-
   busqueda = '';
 
+  // ✅ constructor con ModalController
+  constructor(private modalCtrl: ModalController) {}
+
   ngOnInit() {
-    // Inicializa la lista filtrada con todos los productos
     this.productosFiltrados = [...this.productos];
   }
 
@@ -90,15 +94,27 @@ export class ComprasPage implements OnInit {
       }));
 
       this.productos.push(...nuevos);
-      this.filtrarProductos(); // Vuelve a aplicar el filtro actual
+      this.filtrarProductos();
       event.target.complete();
     }, 1000);
   }
 
   verNotificaciones() {
     console.log('🔔 Ver notificaciones');
-    // Aquí podrías abrir un modal o navegar a la página de notificaciones
   }
-  
-  
+
+  // ✅ Método para abrir modal con ficha técnica
+  async verProducto(producto: any) {
+    const modal = await this.modalCtrl.create({
+      component: ModalVerCompraProductoComponent,
+      componentProps: {
+        producto: producto
+      },
+      breakpoints: [0, 0.7, 1],
+      initialBreakpoint: 0.7,
+      showBackdrop: true
+    });
+
+    await modal.present();
+  }
 }

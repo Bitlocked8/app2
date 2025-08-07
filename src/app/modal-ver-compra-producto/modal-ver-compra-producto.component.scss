@@ -1,0 +1,54 @@
+.white-background {
+  --background: #ffffff;
+  color: #000; // ✅ texto negro por defecto
+}
+
+ion-content.white-background * {
+  color: #000 !important; // ✅ forzar texto negro incluso en componentes de Ionic
+}
+
+ion-item,
+ion-label,
+ion-select,
+ion-input,
+ion-card-content,
+ion-badge,
+ion-button {
+  color: #000 !important; // texto dentro de estos elementos también
+}
+
+s {
+  color: #888; // tachado (precio original)
+}
+
+.titulo {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.precio-actual {
+  font-size: 1.2rem;
+  color: #d62828;
+}
+
+.disponible {
+  font-size: 0.9rem;
+  color: #666;
+  margin-left: 10px;
+}
+
+.comentarios-titulo {
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+
+ion-button {
+  --border-radius: 12px;
+  --box-shadow: none;
+}
+
+ion-item {
+  --background: #fff;
+  --inner-padding-end: 0;
+}
