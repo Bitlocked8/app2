@@ -26,7 +26,7 @@ ion-searchbar {
 
 ion-button {
   --color: #000;
-  color: #000 !important; 
+  color: #000 !important;
 
   ion-icon {
     color: #000 !important;
@@ -62,8 +62,29 @@ ion-button {
   ion-card-content {
     font-size: 13px;
     color: #666;
+
     p {
       margin: 2px 0;
     }
   }
+
+  .ion-button-notificacion {
+    position: relative;
+
+    ion-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 0.7rem;
+      min-width: 18px;
+      height: 18px;
+      padding: 0;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { notificationsOutline } from 'ionicons/icons';
-addIcons({
-  'notifications-outline': notificationsOutline,
-});
+import { Subscription } from 'rxjs';
+
 import {
   IonContent,
   IonHeader,
@@ -14,6 +13,7 @@ import {
   IonIcon,
   IonButton,
   IonGrid,
+  IonBadge,
   IonRow,
   IonCol,
   IonCard,
@@ -23,10 +23,17 @@ import {
   IonInfiniteScroll,
   IonSearchbar,
   IonInfiniteScrollContent,
-  ModalController // ✅ importado aquí
+  ModalController
 } from '@ionic/angular/standalone';
 
-import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/modal-ver-compra-producto.component'; // ✅ ajusta ruta si es diferente
+import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/modal-ver-compra-producto.component';
+import { ModalVerNotificacionesComponent } from '../modal-ver-notificaciones/modal-ver-notificaciones.component';
+
+import { NotificacionesService } from '../services/notificaciones.service'; // Asegúrate que esta ruta es correcta
+
+addIcons({
+  'notifications-outline': notificationsOutline,
+});
 
 @Component({
   selector: 'app-compras',
@@ -42,6 +49,7 @@ import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/mo
     IonToolbar,
     IonButton,
     IonIcon,
+    IonBadge,
     IonSearchbar,
     IonGrid,
     IonRow,
@@ -54,7 +62,7 @@ import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/mo
     IonInfiniteScrollContent,
   ],
 })
-export class ComprasPage implements OnInit {
+export class ComprasPage implements OnInit, OnDestroy {
   productos = Array.from({ length: 10 }).map((_, i) => ({
     id: i,
     nombre: `Agua embotellada ${i + 1}L`,
@@ -67,11 +75,25 @@ export class ComprasPage implements OnInit {
   productosFiltrados: any[] = [];
   busqueda = '';
 
-  // ✅ constructor con ModalController
-  constructor(private modalCtrl: ModalController) {}
+  notificacionesNoLeidas = 0;
+  private notiSub!: Subscription;
+
+  constructor(
+    private modalCtrl: ModalController,
+    private notiService: NotificacionesService
+  ) {}
 
   ngOnInit() {
     this.productosFiltrados = [...this.productos];
+
+    // Suscribirse a notificaciones para contar las no leídas
+    this.notiSub = this.notiService.getObservable().subscribe(notiList => {
+      this.notificacionesNoLeidas = notiList.filter(n => !n.leida).length;
+    });
+  }
+
+  ngOnDestroy() {
+    this.notiSub.unsubscribe();
   }
 
   filtrarProductos() {
@@ -99,11 +121,17 @@ export class ComprasPage implements OnInit {
     }, 1000);
   }
 
-  verNotificaciones() {
-    console.log('🔔 Ver notificaciones');
+  async verNotificaciones() {
+    const modal = await this.modalCtrl.create({
+      component: ModalVerNotificacionesComponent,
+      breakpoints: [0, 0.5, 1],
+      initialBreakpoint: 0.5,
+      showBackdrop: true
+    });
+
+    await modal.present();
   }
 
-  // ✅ Método para abrir modal con ficha técnica
   async verProducto(producto: any) {
     const modal = await this.modalCtrl.create({
       component: ModalVerCompraProductoComponent,

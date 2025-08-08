@@ -1,0 +1,18 @@
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let noti of notificaciones" [class.leida]="noti.leida">
+      <ion-label>
+        <h3>{{ noti.mensaje }}</h3>
+        <p>{{ noti.fecha | date:'short' }}</p>
+      </ion-label>
+      <ion-badge *ngIf="!noti.leida" color="danger">{{ noti.tipo }}</ion-badge>
+      <ion-button fill="clear" size="small" (click)="marcarLeida(noti.id)">
+        <ion-icon slot="icon-only" [name]="noti.leida ? 'checkmark-done-outline' : 'checkmark-outline'"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" color="danger" (click)="limpiarNotificaciones()">
+    <ion-icon slot="start" name="trash-outline"></ion-icon> Limpiar notificaciones
+  </ion-button>
+</ion-content>
