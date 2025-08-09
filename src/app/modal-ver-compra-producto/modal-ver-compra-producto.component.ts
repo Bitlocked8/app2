@@ -60,13 +60,14 @@ export class ModalVerCompraProductoComponent implements OnInit {
     console.log('Modal cerrado');
   }
 
+  // ...imports y demás...
+
   async agregarAlCarrito() {
     console.log('Añadido al carrito:', this.productoSeleccionado);
 
-    // Agregar notificación
     this.notiService.agregar(
       `Producto "${this.producto.nombre}" añadido al carrito, cantidad: ${this.productoSeleccionado.cantidad}.`,
-      'success'
+      'carrito'  // tipo carrito
     );
 
     const toast = await this.toastCtrl.create({
@@ -74,18 +75,32 @@ export class ModalVerCompraProductoComponent implements OnInit {
       duration: 2000,
       color: 'success',
       position: 'bottom',
-      icon: 'cart' // icono de carrito
+      icon: 'cart'
+    });
+
+    await toast.present();
+  }
+
+  async hacerPedido() {
+    console.log('Pedido realizado con:', this.productoSeleccionado);
+
+    await this.notiService.agregar(
+      `Pedido realizado con éxito para "${this.producto.nombre}".`,
+      'pagado'  // tipo pagado
+    );
+
+    const toast = await this.toastCtrl.create({
+      message: 'Pedido realizado con éxito.',
+      duration: 2000,
+      color: 'success',
+      position: 'bottom',
+      icon: 'checkmark-done-outline'
     });
 
     await toast.present();
   }
 
 
-
-  hacerPedido() {
-    console.log('Pedido realizado con:', this.productoSeleccionado);
-    this.notiService.agregar(`Pedido realizado con éxito para "${this.producto.nombre}".`, 'success');
-  }
 
   verTodosLosComentarios() {
     console.log('Ver todos los comentarios');

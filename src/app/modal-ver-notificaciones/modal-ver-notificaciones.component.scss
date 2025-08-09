@@ -58,14 +58,49 @@ ion-item {
   }
 
   ion-badge {
-    margin-right: 8px;
-    font-size: 0.75rem;
-    padding: 4px 8px;
     font-weight: 700;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 12px;
     color: #fff;
-    background-color: #dc3545;
-    /* rojo para no leídas */
+
+    &.success {
+      background-color: #28a745;
+      /* verde */
+    }
+
+    &.danger {
+      background-color: #dc3545;
+      /* rojo */
+    }
+
+    &.warning {
+      background-color: #ff9800;
+      /* naranja */
+    }
+
+    &.tertiary {
+      background-color: #3880ff;
+      /* azul */
+    }
+
+    &.pagado {
+      background-color: #198754;
+      /* verde oscuro */
+    }
+
+    &.pendiente {
+      background-color: #dc3545;
+      /* rojo fuerte */
+    }
+
+    &.carrito {
+      background-color: #ffc107;
+      /* amarillo oscuro */
+      color: #000;
+    }
   }
+
 
   ion-button {
     --padding-start: 4px;

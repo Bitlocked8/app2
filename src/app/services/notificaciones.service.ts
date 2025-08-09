@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export interface Notificacion {
   id: number;
   mensaje: string;
-  tipo: 'info' | 'success' | 'error';
+  tipo: string; // puede ser 'carrito', 'pagado', 'success', 'error', etc.
   fecha: Date;
   leida: boolean;
 }
@@ -19,7 +19,7 @@ export class NotificacionesService {
 
   constructor() {}
 
-  agregar(mensaje: string, tipo: 'info' | 'success' | 'error' = 'info') {
+  agregar(mensaje: string, tipo: string = 'info') {
     const nueva: Notificacion = {
       id: Date.now(),
       mensaje,

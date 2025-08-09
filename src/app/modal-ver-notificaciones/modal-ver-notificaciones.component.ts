@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
@@ -21,7 +21,7 @@ import { trashOutline, checkmarkDoneOutline } from 'ionicons/icons';
     IonIcon,
   ]
 })
-export class ModalVerNotificacionesComponent implements OnInit {
+export class ModalVerNotificacionesComponent implements OnInit, OnDestroy {
   notificaciones: Notificacion[] = [];
   sub!: Subscription;
 
@@ -43,5 +43,27 @@ export class ModalVerNotificacionesComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  getTextoBadge(tipo: string): string {
+    switch(tipo) {
+      case 'carrito': return 'Añadido';
+      case 'pagado': return 'Pagado';
+      case 'success': return 'Éxito';
+      case 'error': return 'Error';
+      case 'pendiente': return 'Pendiente';
+      default: return 'Info';
+    }
+  }
+
+  getColorBadge(tipo: string): string {
+    switch(tipo) {
+      case 'carrito': return 'warning';  // naranja
+      case 'pagado': return 'success';   // verde
+      case 'success': return 'success';
+      case 'error': 
+      case 'pendiente': return 'danger'; // rojo
+      default: return 'primary';
+    }
   }
 }
