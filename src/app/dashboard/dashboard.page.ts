@@ -32,6 +32,7 @@ export class DashboardPage {
   constructor() {
     addIcons({ cart, search, logOut, home, water });
     this.checkAuth();
+    history.pushState(null, '', location.href); // Bloquea atrás desde la entrada
   }
 
   private checkAuth() {
@@ -40,6 +41,16 @@ export class DashboardPage {
       this.router.navigate(['/home'], { replaceUrl: true });
     } else {
       this.user = JSON.parse(authData).user;
+    }
+  }
+
+  // 🔹 Evita volver atrás si hay sesión y estamos en dashboard
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: Event) {
+    const isAuthenticated = localStorage.getItem('fakeAuth') !== null;
+
+    if (this.router.url.startsWith('/dashboard') && isAuthenticated) {
+      history.pushState(null, '', location.href);
     }
   }
 

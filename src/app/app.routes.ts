@@ -10,6 +10,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
+    canActivate: [authGuard], // 🔹 Protege el dashboard
     children: [
       {
         path: 'compras',
@@ -26,6 +27,7 @@ export const routes: Routes = [
       }
     ]
   },
+
   {
     path: '',
     redirectTo: 'dashboard', // Página principal
@@ -33,7 +35,7 @@ export const routes: Routes = [
   },
 
   {
-    path: '',
+    path: '**', // 🔹 Ruta para cualquier URL no encontrada
     redirectTo: 'home',
     pathMatch: 'full',
   },
