@@ -1,57 +1,38 @@
-<ion-content class="ion-padding" color="light">
+<ion-content class="ion-padding">
   <div class="login-container">
-    <ion-img src="assets/logo.png" class="logo" *ngIf="!isLoading"></ion-img>
-    
-    <!-- Spinner mientras carga -->
-    <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+    <!-- Spinner de carga con texto -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Iniciando sesión...</p>
+    </div>
 
     <form *ngIf="!isLoading" (ngSubmit)="login()">
-      <ion-item class="ion-margin-bottom">
+      <ion-item>
         <ion-label position="floating">Email</ion-label>
-        <ion-input 
-          [(ngModel)]="email" 
-          name="email"
-          type="email" 
-          fill="solid"
-          placeholder="tu@email.com"
-          required>
-        </ion-input>
+        <br>
+        <ion-input [(ngModel)]="email" name="email" type="email" required></ion-input>
       </ion-item>
 
-      <ion-item class="ion-margin-bottom">
+      <ion-item>
         <ion-label position="floating">Contraseña</ion-label>
-        <ion-input 
-          [(ngModel)]="password" 
-          name="password"
-          [type]="showPassword ? 'text' : 'password'" 
-          fill="solid"
-          placeholder="••••••••"
-          required>
-        </ion-input>
-        <ion-button fill="clear" slot="end" (click)="showPassword = !showPassword">
+        <br>
+        <ion-input [(ngModel)]="password" name="password" [type]="showPassword ? 'text' : 'password'" required></ion-input>
+        <ion-button fill="clear" slot="end" (click)="togglePasswordVisibility()">
           <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
         </ion-button>
       </ion-item>
 
-      <!-- Mensaje de error -->
-      <ion-text *ngIf="errorMessage" color="danger" class="ion-text-center">
+      <ion-text *ngIf="errorMessage" color="danger" class="error-message">
         <p>{{ errorMessage }}</p>
       </ion-text>
 
-      <ion-button 
-        expand="block" 
-        type="submit"
-        class="ion-margin-top">
+      <ion-button expand="block" type="submit" class="submit-button">
         Login
       </ion-button>
 
-      <ion-button 
-        expand="block" 
-        color="danger" 
-        class="ion-margin-top"
-        (click)="loginWithGoogle()">
+      <ion-button expand="block" class="google-button" (click)="loginWithGoogle()">
         <ion-icon slot="start" name="logo-google"></ion-icon>
-        Ingresar con Google (Demo)
+        Google
       </ion-button>
     </form>
   </div>
