@@ -1,17 +1,20 @@
-<ion-content class="ion-padding white-background">
+<ion-content>
   <ion-grid>
     <ion-row>
       <ion-col size="12">
-        <h2 class="titulo">{{ producto?.nombre }}</h2>
+        <h2>{{ producto?.nombre }}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row>
-      <ion-col>
-        <p><strong>Antes:</strong> 
+    <ion-row align-items-center>
+      <ion-col size="6">
+        <p>
+          <strong>Antes:</strong>
           <s>${{ (producto?.precio * 1.2) | number:'1.2-2' }}</s>
         </p>
-        <p class="precio-actual">
+      </ion-col>
+      <ion-col size="6">
+        <p>
           <strong>Ahora:</strong> ${{ producto?.precio }}
           <ion-badge color="danger">
             Ahorra ${{ ((producto?.precio * 1.2) - producto?.precio) | number:'1.2-2' }}
@@ -22,16 +25,12 @@
 
     <ion-item>
       <ion-label position="stacked">Cantidad</ion-label>
-      <ion-input
-        type="number"
-        [(ngModel)]="productoSeleccionado.cantidad"
-        min="1"
-        [max]="producto?.stock"
+      <ion-input type="number" [(ngModel)]="productoSeleccionado.cantidad" min="1" [max]="producto?.stock"
         inputmode="numeric">
       </ion-input>
     </ion-item>
 
-    <p class="disponible">{{ producto?.stock }} disponible(s)</p>
+    <p>{{ producto?.stock }} disponible(s)</p>
 
     <ion-item>
       <ion-label>Precio total:</ion-label>
@@ -41,26 +40,128 @@
     <ion-item *ngIf="descuentoAplicado">
       <ion-label color="danger">{{ descuentoAplicado }}</ion-label>
     </ion-item>
-
-    <ion-row class="ion-margin-top">
-      <ion-col size="6">
-        <ion-button expand="block" fill="outline" color="primary" shape="round" (click)="agregarAlCarrito()">
-          Añadir al carrito
-        </ion-button>
+    <!-- Grupo selección método de pago -->
+    <ion-row>
+      <ion-col size="12">
+        <ion-segment [(ngModel)]="metodoPago" value="despues">
+          <ion-segment-button value="contado">
+            <ion-label>Al contado</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="despues">
+            <ion-label>Pagar después</ion-label>
+          </ion-segment-button>
+        </ion-segment>
       </ion-col>
-      <ion-col size="6">
-        <ion-button expand="block" fill="solid" color="success" shape="round" (click)="hacerPedido()">
+    </ion-row>
+
+    <!-- Métodos para "Al contado" -->
+    <ion-item *ngIf="metodoPago === 'contado'">
+      <ion-label>Método de pago ahora</ion-label>
+      <ion-select [(ngModel)]="metodoPagoAhora" placeholder="Selecciona método de pago">
+        <ion-select-option value="tarjeta">Tarjeta de crédito/débito</ion-select-option>
+        <ion-select-option value="paypal">PayPal</ion-select-option>
+        <ion-select-option value="efectivo">Efectivo</ion-select-option>
+        <ion-select-option value="qr">QR</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Contenido dinámico para el método seleccionado -->
+    <div *ngIf="metodoPago === 'contado'">
+
+      <!-- Si es QR -->
+      <div *ngIf="metodoPagoAhora === 'qr'" style="text-align:center; margin-top: 16px;">
+        <p>Escanea este código QR para pagar:</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago"
+          style="margin: 10px auto; display:block;">
+        <ion-item>
+          <ion-label>Subir comprobante</ion-label>
+          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+        </ion-item>
+      </div>
+
+      <!-- Si es tarjeta -->
+      <div *ngIf="metodoPagoAhora === 'tarjeta'">
+        <ion-item>
+          <ion-label position="floating">Número de tarjeta</ion-label>
+          <ion-input type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Fecha de expiración</ion-label>
+          <ion-input type="month"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">CVV</ion-label>
+          <ion-input type="number" maxlength="3"></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- PayPal -->
+      <div *ngIf="metodoPagoAhora === 'paypal'" style="margin-top: 16px;">
+        <p><strong>Datos de la empresa para el pago:</strong></p>
+        <ion-list>
+          <ion-item>
+            <ion-label>Email PayPal:</ion-label>
+            <ion-text>empresa-fake@paypal.com</ion-text>
+          </ion-item>
+          <ion-item>
+            <ion-label>Nombre:</ion-label>
+            <ion-text>Empresa Ejemplo SRL</ion-text>
+          </ion-item>
+        </ion-list>
+
+        <p style="margin-top: 10px;">Envíe el pago a los datos indicados y suba el comprobante.</p>
+
+        <ion-item>
+          <ion-label>Subir comprobante</ion-label>
+          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+        </ion-item>
+      </div>
+
+
+      <!-- Si es Efectivo -->
+      <div *ngIf="metodoPagoAhora === 'efectivo'">
+        <p>Podrá pagar en efectivo al momento de recibir el producto.</p>
+      </div>
+    </div>
+
+    <!-- Formulario y mensaje para "Pagar después" -->
+    <div *ngIf="metodoPago === 'despues'">
+      <p>Recuerde que el pago estará disponible solo durante 24 horas para completar.</p>
+
+      <ion-item>
+        <ion-label position="floating">Correo electrónico</ion-label>
+        <ion-input type="email" [(ngModel)]="pagoDespuesDatos.email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input type="tel" [(ngModel)]="pagoDespuesDatos.telefono"></ion-input>
+      </ion-item>
+    </div>
+
+
+
+
+    <!-- Botones según método de pago -->
+    <ion-row>
+      <ion-col size="12">
+        <ion-button *ngIf="metodoPago === 'contado'" color="medium" (click)="hacerPedido()" shape="round">
           Comprar ahora
+        </ion-button>
+
+        <ion-button *ngIf="metodoPago === 'despues'" color="dark" (click)="agregarAlCarrito()" shape="round">
+          Añadir al carrito
         </ion-button>
       </ion-col>
     </ion-row>
 
-    <ion-accordion-group class="ion-margin-top" *ngIf="producto?.descripcion">
+
+    <ion-accordion-group *ngIf="producto?.descripcion">
       <ion-accordion value="descripcion">
         <ion-item slot="header">
           <ion-label>Descripción</ion-label>
         </ion-item>
-        <div class="ion-padding" slot="content">
+        <div slot="content">
           <p>{{ producto?.descripcion }}</p>
         </div>
       </ion-accordion>

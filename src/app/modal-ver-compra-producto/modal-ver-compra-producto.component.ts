@@ -2,24 +2,24 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-import { ModalController } from '@ionic/angular';
+
 import {
-  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel,
-  IonInput, IonItem, IonSelect, IonSelectOption, IonBadge,
-  IonCard, IonCardContent, IonAccordionGroup, IonAccordion
+  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonSegment, IonSegmentButton,  IonSelect,IonText,
+  IonSelectOption,
+  IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList, IonRadioGroup, IonRadio, IonListHeader
 } from '@ionic/angular/standalone';
 
-// Importa tu servicio aquí
 import { NotificacionesService } from '../services/notificaciones.service';
 
 @Component({
   selector: 'app-modal-ver-compra-producto',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
+    CommonModule, FormsModule, IonSegment, IonSegmentButton,  IonSelect,
+  IonSelectOption,IonText,
     IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel,
-    IonInput, IonItem, IonSelect, IonSelectOption, IonBadge,
-    IonCard, IonCardContent, IonAccordionGroup, IonAccordion
+    IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion,
+    IonList, IonRadioGroup, IonRadio, IonListHeader
   ],
   templateUrl: './modal-ver-compra-producto.component.html',
   styleUrls: ['./modal-ver-compra-producto.component.scss'],
@@ -35,6 +35,13 @@ export class ModalVerCompraProductoComponent implements OnInit {
     cantidad: 1,
   };
 
+  metodoPago: string = 'despues'; // Valor inicial: pagar después
+  metodoPagoAhora: string = '';
+  pagoDespuesDatos = {
+    email: '',
+    telefono: '',
+  };
+
   precioOriginalCalculado = 0;
   precioAhorroCalculado = 0;
 
@@ -42,7 +49,6 @@ export class ModalVerCompraProductoComponent implements OnInit {
     private notiService: NotificacionesService,
     private toastCtrl: ToastController
   ) { }
-
 
   ngOnInit() {
     this.calcularPrecioAnteriorYDescuento();
@@ -59,8 +65,6 @@ export class ModalVerCompraProductoComponent implements OnInit {
   cerrar() {
     console.log('Modal cerrado');
   }
-
-  // ...imports y demás...
 
   async agregarAlCarrito() {
     console.log('Añadido al carrito:', this.productoSeleccionado);
@@ -86,7 +90,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
 
     await this.notiService.agregar(
       `Pedido realizado con éxito para "${this.producto.nombre}".`,
-      'pagado'  // tipo pagado
+      'pagado'
     );
 
     const toast = await this.toastCtrl.create({
@@ -100,11 +104,15 @@ export class ModalVerCompraProductoComponent implements OnInit {
     await toast.present();
   }
 
-
-
   verTodosLosComentarios() {
     console.log('Ver todos los comentarios');
   }
+  onComprobanteSubido(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    console.log('Comprobante subido:', file.name);
+  }
+}
 
   get precioTotal(): string {
     const precioUnitario = parseFloat(this.producto.precio);
