@@ -2,24 +2,22 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-
 import {
-  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonSegment, IonSegmentButton,  IonSelect,IonText,
-  IonSelectOption,
-  IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList
+  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonSegment, IonSegmentButton,
+  IonSelect, IonText, IonSelectOption, IonInput, IonItem, IonBadge, IonAccordionGroup,
+  IonAccordion, IonList
 } from '@ionic/angular/standalone';
 
 import { NotificacionesService } from '../services/notificaciones.service';
+import { HistorialService, Compra } from '../services/historial.service';
 
 @Component({
   selector: 'app-modal-ver-compra-producto',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, IonSegment, IonSegmentButton,  IonSelect,
-  IonSelectOption,IonText,
-    IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel,
-    IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion,
-    IonList
+    CommonModule, FormsModule, IonSegment, IonSegmentButton, IonSelect,
+    IonSelectOption, IonText, IonContent, IonGrid, IonRow, IonCol, IonButton,
+    IonLabel, IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList
   ],
   templateUrl: './modal-ver-compra-producto.component.html',
   styleUrls: ['./modal-ver-compra-producto.component.scss'],
@@ -34,20 +32,18 @@ export class ModalVerCompraProductoComponent implements OnInit {
     cantidad: 1,
   };
 
-  metodoPago: string = 'despues'; // Valor inicial: pagar después
+  metodoPago: string = 'despues';
   metodoPagoAhora: string = '';
-  pagoDespuesDatos = {
-    email: '',
-    telefono: '',
-  };
+  pagoDespuesDatos = { email: '', telefono: '' };
 
   precioOriginalCalculado = 0;
   precioAhorroCalculado = 0;
 
-  comprobanteSubido: boolean = false; // ✅ ahora sí existe
+  comprobanteSubido: boolean = false;
 
   constructor(
     private notiService: NotificacionesService,
+    private historialService: HistorialService,
     private toastCtrl: ToastController
   ) {}
 
@@ -56,19 +52,23 @@ export class ModalVerCompraProductoComponent implements OnInit {
   }
 
   calcularPrecioAnteriorYDescuento() {
-    const porcentajeAumento = Math.floor(Math.random() * 15) + 10; // 10% a 25%
+    const porcentajeAumento = Math.floor(Math.random() * 15) + 10;
     const precioActual = parseFloat(this.producto?.precio ?? '0');
 
     this.precioOriginalCalculado = +(precioActual * (1 + porcentajeAumento / 100)).toFixed(2);
     this.precioAhorroCalculado = +(this.precioOriginalCalculado - precioActual).toFixed(2);
   }
 
-  cerrar() {
-    console.log('Modal cerrado');
-  }
-
   async agregarAlCarrito() {
-    console.log('Añadido al carrito:', this.productoSeleccionado);
+    this.historialService.addCompra({
+      producto: this.producto.nombre,
+      imagen: this.producto.imagen,
+      precio: parseFloat(this.producto.precio),
+      metodoPago: this.metodoPago === 'contado' ? this.metodoPagoAhora : 'pagar después',
+      fecha: new Date(),
+      cantidad: this.productoSeleccionado.cantidad,
+      estado: 'carrito'
+    });
 
     this.notiService.agregar(
       `Producto "${this.producto.nombre}" añadido al carrito, cantidad: ${this.productoSeleccionado.cantidad}.`,
@@ -82,7 +82,6 @@ export class ModalVerCompraProductoComponent implements OnInit {
       position: 'bottom',
       icon: 'cart'
     });
-
     await toast.present();
   }
 
@@ -99,9 +98,17 @@ export class ModalVerCompraProductoComponent implements OnInit {
       return;
     }
 
-    console.log('Pedido realizado con:', this.productoSeleccionado);
+    this.historialService.addCompra({
+      producto: this.producto.nombre,
+      imagen: this.producto.imagen,
+      precio: parseFloat(this.producto.precio),
+      metodoPago: this.metodoPagoAhora,
+      fecha: new Date(),
+      cantidad: this.productoSeleccionado.cantidad,
+      estado: 'pendiente'
+    });
 
-    await this.notiService.agregar(
+    this.notiService.agregar(
       `Pedido realizado con éxito para "${this.producto.nombre}".`,
       'pagado'
     );
@@ -113,18 +120,13 @@ export class ModalVerCompraProductoComponent implements OnInit {
       position: 'bottom',
       icon: 'checkmark-done-outline'
     });
-
     await toast.present();
-  }
-
-  verTodosLosComentarios() {
-    console.log('Ver todos los comentarios');
   }
 
   onComprobanteSubido(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.comprobanteSubido = true; // ✅ ahora se guarda
+      this.comprobanteSubido = true;
       console.log('Comprobante subido:', file.name);
     }
   }
@@ -134,19 +136,12 @@ export class ModalVerCompraProductoComponent implements OnInit {
     const cantidad = this.productoSeleccionado.cantidad;
     let descuento = 0;
 
-    if (cantidad >= 10) {
-      descuento += 0.10;
-    }
+    if (cantidad >= 10) descuento += 0.10;
 
     const hoy = new Date();
-    const eventos: { [key: string]: number } = {
-      '12-25': 0.20,
-      '01-01': 0.15,
-    };
+    const eventos: { [key: string]: number } = { '12-25': 0.20, '01-01': 0.15 };
     const key = hoy.toISOString().slice(5, 10);
-    if (eventos[key]) {
-      descuento += eventos[key];
-    }
+    if (eventos[key]) descuento += eventos[key];
 
     const total = precioUnitario * cantidad * (1 - descuento);
     return `${total.toFixed(2)} Bs.`;
@@ -156,18 +151,16 @@ export class ModalVerCompraProductoComponent implements OnInit {
     const cantidad = this.productoSeleccionado.cantidad;
     let descuento = 0;
 
-    if (cantidad >= 10) {
-      descuento += 10;
-    }
+    if (cantidad >= 10) descuento += 10;
 
     const hoy = new Date().toISOString().slice(5, 10);
-    if (hoy === '12-25') {
-      descuento += 20;
-    } else if (hoy === '01-01') {
-      descuento += 15;
-    }
+    if (hoy === '12-25') descuento += 20;
+    else if (hoy === '01-01') descuento += 15;
 
     return descuento > 0 ? `-${descuento}% de descuento aplicado` : '';
   }
-}
 
+  verTodosLosComentarios() {
+    console.log('Ver todos los comentarios');
+  }
+}
