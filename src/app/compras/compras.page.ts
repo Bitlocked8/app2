@@ -7,9 +7,7 @@ import { Subscription } from 'rxjs';
 
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
+
   IonIcon,
   IonButton,
   IonGrid,
@@ -44,9 +42,7 @@ addIcons({
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
+
     IonButton,
     IonIcon,
     IonBadge,
@@ -81,7 +77,7 @@ export class ComprasPage implements OnInit, OnDestroy {
   constructor(
     private modalCtrl: ModalController,
     private notiService: NotificacionesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.productosFiltrados = [...this.productos];

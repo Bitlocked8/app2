@@ -6,7 +6,7 @@ import { ToastController } from '@ionic/angular';
 import {
   IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonSegment, IonSegmentButton,  IonSelect,IonText,
   IonSelectOption,
-  IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList, IonRadioGroup, IonRadio, IonListHeader
+  IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList
 } from '@ionic/angular/standalone';
 
 import { NotificacionesService } from '../services/notificaciones.service';
@@ -19,13 +19,12 @@ import { NotificacionesService } from '../services/notificaciones.service';
   IonSelectOption,IonText,
     IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel,
     IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion,
-    IonList, IonRadioGroup, IonRadio, IonListHeader
+    IonList
   ],
   templateUrl: './modal-ver-compra-producto.component.html',
   styleUrls: ['./modal-ver-compra-producto.component.scss'],
 })
 export class ModalVerCompraProductoComponent implements OnInit {
-
   @Input() producto: any;
 
   productoSeleccionado = {
@@ -45,10 +44,12 @@ export class ModalVerCompraProductoComponent implements OnInit {
   precioOriginalCalculado = 0;
   precioAhorroCalculado = 0;
 
+  comprobanteSubido: boolean = false; // ✅ ahora sí existe
+
   constructor(
     private notiService: NotificacionesService,
     private toastCtrl: ToastController
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.calcularPrecioAnteriorYDescuento();
@@ -71,7 +72,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
 
     this.notiService.agregar(
       `Producto "${this.producto.nombre}" añadido al carrito, cantidad: ${this.productoSeleccionado.cantidad}.`,
-      'carrito'  // tipo carrito
+      'carrito'
     );
 
     const toast = await this.toastCtrl.create({
@@ -86,6 +87,18 @@ export class ModalVerCompraProductoComponent implements OnInit {
   }
 
   async hacerPedido() {
+    if (!this.comprobanteSubido) {
+      const toast = await this.toastCtrl.create({
+        message: 'Debes subir el comprobante antes de comprar.',
+        duration: 2000,
+        color: 'danger',
+        position: 'bottom',
+        icon: 'alert-circle-outline'
+      });
+      await toast.present();
+      return;
+    }
+
     console.log('Pedido realizado con:', this.productoSeleccionado);
 
     await this.notiService.agregar(
@@ -107,12 +120,14 @@ export class ModalVerCompraProductoComponent implements OnInit {
   verTodosLosComentarios() {
     console.log('Ver todos los comentarios');
   }
+
   onComprobanteSubido(event: any) {
-  const file = event.target.files[0];
-  if (file) {
-    console.log('Comprobante subido:', file.name);
+    const file = event.target.files[0];
+    if (file) {
+      this.comprobanteSubido = true; // ✅ ahora se guarda
+      console.log('Comprobante subido:', file.name);
+    }
   }
-}
 
   get precioTotal(): string {
     const precioUnitario = parseFloat(this.producto.precio);
@@ -155,3 +170,4 @@ export class ModalVerCompraProductoComponent implements OnInit {
     return descuento > 0 ? `-${descuento}% de descuento aplicado` : '';
   }
 }
+

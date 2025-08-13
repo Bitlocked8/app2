@@ -40,7 +40,7 @@
     <ion-item *ngIf="descuentoAplicado">
       <ion-label color="danger">{{ descuentoAplicado }}</ion-label>
     </ion-item>
-    <!-- Grupo selección método de pago -->
+
     <ion-row>
       <ion-col size="12">
         <ion-segment [(ngModel)]="metodoPago" value="despues">
@@ -54,21 +54,17 @@
       </ion-col>
     </ion-row>
 
-    <!-- Métodos para "Al contado" -->
     <ion-item *ngIf="metodoPago === 'contado'">
       <ion-label>Método de pago ahora</ion-label>
       <ion-select [(ngModel)]="metodoPagoAhora" placeholder="Selecciona método de pago">
         <ion-select-option value="tarjeta">Tarjeta de crédito/débito</ion-select-option>
         <ion-select-option value="paypal">PayPal</ion-select-option>
-        <ion-select-option value="efectivo">Efectivo</ion-select-option>
         <ion-select-option value="qr">QR</ion-select-option>
       </ion-select>
     </ion-item>
 
-    <!-- Contenido dinámico para el método seleccionado -->
     <div *ngIf="metodoPago === 'contado'">
-
-      <!-- Si es QR -->
+      <!-- QR -->
       <div *ngIf="metodoPagoAhora === 'qr'" style="text-align:center; margin-top: 16px;">
         <p>Escanea este código QR para pagar:</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago"
@@ -79,7 +75,7 @@
         </ion-item>
       </div>
 
-      <!-- Si es tarjeta -->
+      <!-- Tarjeta -->
       <div *ngIf="metodoPagoAhora === 'tarjeta'">
         <ion-item>
           <ion-label position="floating">Número de tarjeta</ion-label>
@@ -92,6 +88,10 @@
         <ion-item>
           <ion-label position="floating">CVV</ion-label>
           <ion-input type="number" maxlength="3"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Subir comprobante</ion-label>
+          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
         </ion-item>
       </div>
 
@@ -116,15 +116,8 @@
           <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
         </ion-item>
       </div>
-
-
-      <!-- Si es Efectivo -->
-      <div *ngIf="metodoPagoAhora === 'efectivo'">
-        <p>Podrá pagar en efectivo al momento de recibir el producto.</p>
-      </div>
     </div>
 
-    <!-- Formulario y mensaje para "Pagar después" -->
     <div *ngIf="metodoPago === 'despues'">
       <p>Recuerde que el pago estará disponible solo durante 24 horas para completar.</p>
 
@@ -139,13 +132,10 @@
       </ion-item>
     </div>
 
-
-
-
-    <!-- Botones según método de pago -->
     <ion-row>
       <ion-col size="12">
-        <ion-button *ngIf="metodoPago === 'contado'" color="medium" (click)="hacerPedido()" shape="round">
+        <ion-button *ngIf="metodoPago === 'contado'" color="medium" (click)="hacerPedido()" shape="round"
+          [disabled]="!comprobanteSubido">
           Comprar ahora
         </ion-button>
 
@@ -154,6 +144,7 @@
         </ion-button>
       </ion-col>
     </ion-row>
+
 
 
     <ion-accordion-group *ngIf="producto?.descripcion">
