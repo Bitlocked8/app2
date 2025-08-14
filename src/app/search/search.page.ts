@@ -1,7 +1,10 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar, IonModal, IonButton, IonButtons } from '@ionic/angular/standalone';
+import { 
+  IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar, 
+  IonModal, IonButton, IonButtons, IonSegment, IonSegmentButton, IonList, IonText, IonInput 
+} from '@ionic/angular/standalone';
 import { HistorialService, Compra } from '../services/historial.service';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
 import { Subscription } from 'rxjs';
@@ -24,6 +27,11 @@ import { Subscription } from 'rxjs';
     IonModal,
     IonButton,
     IonButtons,
+    IonSegment,
+    IonSegmentButton,
+    IonList,
+    IonText,
+    IonInput,
     DatePipe
   ]
 })
@@ -32,6 +40,9 @@ export class SearchPage implements OnDestroy {
   selectedCompra?: Compra;
   notificaciones: Notificacion[] = [];
   notiSub!: Subscription;
+  metodoPago = 'contado';
+  metodoPagoAhora = 'qr';
+  comprobanteSubido = false;
 
   @ViewChild('modal') modal!: IonModal;
 
@@ -40,8 +51,6 @@ export class SearchPage implements OnDestroy {
     private notiService: NotificacionesService
   ) {
     this.historialService.compras$.subscribe(c => this.compras = c);
-
-    // Suscripción a notificaciones
     this.notiSub = this.notiService.getObservable().subscribe(noti => {
       this.notificaciones = noti;
     });
@@ -53,6 +62,7 @@ export class SearchPage implements OnDestroy {
 
   abrirModal(compra: Compra) {
     this.selectedCompra = compra;
+    this.comprobanteSubido = false;
     this.modal.present();
   }
 
@@ -64,12 +74,12 @@ export class SearchPage implements OnDestroy {
     const timeline = [];
     if (compra.estado === 'carrito' || compra.estado === 'pendiente') {
       timeline.push({ label: 'Falta pagar', done: false });
-    } else {
-      timeline.push({ label: 'Pago recibido', done: true });
+    } else if (compra.estado === 'pagado' || compra.estado === 'enviado' || compra.estado === 'recibido') {
+      timeline.push({ label: 'Pago realizado', done: true });
     }
 
-    if (compra.estado === 'enviado' || compra.estado === 'recibido') {
-      timeline.push({ label: 'Empaquetado', done: true });
+    if (compra.estado === 'pagado' || compra.estado === 'enviado' || compra.estado === 'recibido') {
+      timeline.push({ label: 'Empaquetado', done: compra.estado !== 'pagado' });
     } else {
       timeline.push({ label: 'Empaquetado', done: false });
     }
@@ -89,22 +99,24 @@ export class SearchPage implements OnDestroy {
     return timeline;
   }
 
-  // Notificaciones filtradas por producto
   get notificacionesFiltradas(): Notificacion[] {
-    if (!this.selectedCompra) return [];
-    return this.notificaciones.filter(n => n.mensaje.includes(this.selectedCompra!.producto));
+    return this.notificaciones.filter(n => n.mensaje.includes(this.selectedCompra?.producto ?? ''));
   }
 
   pagar(compra: Compra) {
-    // Actualizamos estado
-    this.historialService.actualizarEstado(compra.producto, 'pendiente');
-
-    // Creamos notificación
+    if (!this.comprobanteSubido) return;
+    this.historialService.actualizarEstado(compra.producto, 'pagado');
     this.notiService.agregar(`Pago realizado para ${compra.producto}`, 'pagado');
-
-    // Actualizamos inline modal si está abierto
     if (this.selectedCompra?.producto === compra.producto) {
-      this.selectedCompra.estado = 'pendiente';
+      this.selectedCompra.estado = 'pagado';
+    }
+  }
+
+  onComprobanteSubido(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.comprobanteSubido = true;
+      console.log('Comprobante subido:', file.name);
     }
   }
 }

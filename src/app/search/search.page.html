@@ -1,9 +1,3 @@
-<ion-header>
-  <ion-toolbar color="light">
-    <ion-title>Historial de Compras</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
 
   <div *ngIf="compras.length === 0" class="empty-state">
@@ -22,11 +16,8 @@
         <p class="fecha">{{ compra.fecha | date:'short' }}</p>
       </ion-label>
     </ion-item>
-
-   
   </div>
 
-  <!-- Modal Inline -->
   <ion-modal #modal>
     <ng-template>
       <ion-header>
@@ -37,6 +28,7 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
+
       <ion-content class="ion-padding" *ngIf="selectedCompra">
         <ion-item lines="none">
           <ion-avatar slot="start">
@@ -52,7 +44,6 @@
           </ion-label>
         </ion-item>
 
-        <!-- Timeline vertical en modal -->
         <div class="timeline-vertical">
           <div *ngFor="let estado of getTimeline(selectedCompra)" class="timeline-step">
             <input type="radio" disabled [checked]="estado.done">
@@ -61,7 +52,66 @@
         </div>
 
         <div *ngIf="selectedCompra.estado === 'carrito' || selectedCompra.estado === 'pendiente'" class="acciones">
-          <ion-button color="success" (click)="pagar(selectedCompra)">Pagar ahora</ion-button>
+        
+
+          <div *ngIf="metodoPago === 'contado'">
+            <ion-segment [(ngModel)]="metodoPagoAhora">
+              <ion-segment-button value="qr">QR</ion-segment-button>
+              <ion-segment-button value="tarjeta">Tarjeta</ion-segment-button>
+              <ion-segment-button value="paypal">PayPal</ion-segment-button>
+            </ion-segment>
+
+            <div *ngIf="metodoPagoAhora === 'qr'" style="text-align:center; margin-top: 16px;">
+              <p>Escanea este código QR para pagar:</p>
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago" style="margin: 10px auto; display:block;">
+              <ion-item>
+                <ion-label>Subir comprobante</ion-label>
+                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+              </ion-item>
+            </div>
+
+            <div *ngIf="metodoPagoAhora === 'tarjeta'">
+              <ion-item>
+                <ion-label position="floating">Número de tarjeta</ion-label>
+                <ion-input type="text"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Fecha de expiración</ion-label>
+                <ion-input type="month"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">CVV</ion-label>
+                <ion-input type="number" maxlength="3"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label>Subir comprobante</ion-label>
+                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+              </ion-item>
+            </div>
+
+            <div *ngIf="metodoPagoAhora === 'paypal'" style="margin-top: 16px;">
+              <p><strong>Datos de la empresa para el pago:</strong></p>
+              <ion-list>
+                <ion-item>
+                  <ion-label>Email PayPal:</ion-label>
+                  <ion-text>empresa-fake@paypal.com</ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Nombre:</ion-label>
+                  <ion-text>Empresa Ejemplo SRL</ion-text>
+                </ion-item>
+              </ion-list>
+              <p style="margin-top: 10px;">Envíe el pago a los datos indicados y suba el comprobante.</p>
+              <ion-item>
+                <ion-label>Subir comprobante</ion-label>
+                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+              </ion-item>
+            </div>
+
+          </div>
+            <ion-button color="success" [disabled]="!comprobanteSubido" (click)="pagar(selectedCompra)">
+            Pagar ahora
+          </ion-button>
         </div>
       </ion-content>
     </ng-template>

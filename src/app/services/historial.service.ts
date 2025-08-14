@@ -8,7 +8,7 @@ export interface Compra {
   metodoPago: string;
   fecha: Date;
   cantidad: number;
-  estado: 'carrito' | 'pendiente' | 'enviado' | 'recibido';
+  estado: 'carrito' | 'pendiente' | 'pagado' | 'enviado' | 'recibido';
 }
 
 @Injectable({
@@ -31,7 +31,9 @@ export class HistorialService {
 
   actualizarEstado(producto: string, nuevoEstado: Compra['estado']) {
     const item = this.compras.find(c => c.producto === producto && c.estado !== 'recibido');
-    if (item) item.estado = nuevoEstado;
+    if (item) {
+      item.estado = nuevoEstado;
+    }
     this.comprasSubject.next([...this.compras]); // actualizar también aquí
   }
 }

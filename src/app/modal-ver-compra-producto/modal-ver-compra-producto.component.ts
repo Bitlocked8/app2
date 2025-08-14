@@ -45,7 +45,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
     private notiService: NotificacionesService,
     private historialService: HistorialService,
     private toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.calcularPrecioAnteriorYDescuento();
@@ -86,7 +86,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
   }
 
   async hacerPedido() {
-    if (!this.comprobanteSubido) {
+    if (!this.comprobanteSubido && this.metodoPago === 'contado') {
       const toast = await this.toastCtrl.create({
         message: 'Debes subir el comprobante antes de comprar.',
         duration: 2000,
@@ -98,6 +98,8 @@ export class ModalVerCompraProductoComponent implements OnInit {
       return;
     }
 
+    const estadoFinal = this.metodoPago === 'contado' ? 'pagado' : 'pendiente';
+
     this.historialService.addCompra({
       producto: this.producto.nombre,
       imagen: this.producto.imagen,
@@ -105,16 +107,20 @@ export class ModalVerCompraProductoComponent implements OnInit {
       metodoPago: this.metodoPagoAhora,
       fecha: new Date(),
       cantidad: this.productoSeleccionado.cantidad,
-      estado: 'pendiente'
+      estado: estadoFinal
     });
 
     this.notiService.agregar(
-      `Pedido realizado con éxito para "${this.producto.nombre}".`,
-      'pagado'
+      estadoFinal === 'pagado'
+        ? `Pago confirmado para "${this.producto.nombre}".`
+        : `Pedido realizado para "${this.producto.nombre}", pendiente de pago.`,
+      estadoFinal === 'pagado' ? 'pagado' : 'pendiente'
     );
 
     const toast = await this.toastCtrl.create({
-      message: 'Pedido realizado con éxito.',
+      message: estadoFinal === 'pagado'
+        ? 'Compra realizada y pagada con éxito.'
+        : 'Pedido realizado, pendiente de pago.',
       duration: 2000,
       color: 'success',
       position: 'bottom',
@@ -122,6 +128,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
     });
     await toast.present();
   }
+
 
   onComprobanteSubido(event: any) {
     const file = event.target.files[0];
