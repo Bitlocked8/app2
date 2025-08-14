@@ -1,0 +1,21 @@
+.timeline-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+
+  .timeline-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input[type="radio"] {
+      accent-color: green; /* radio verde si está marcado */
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+    }
+  }
+}

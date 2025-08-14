@@ -11,20 +11,60 @@
   </div>
 
   <div *ngFor="let compra of compras" class="timeline-item">
-    <div class="timeline-marker"></div>
-    <div class="timeline-content">
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img [src]="compra.imagen" alt="{{ compra.producto }}">
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ compra.producto }}</h2>
-          <p>Precio: ${{ compra.precio }}</p>
-          <p>Método: {{ compra.metodoPago }}</p>
-          <p class="fecha">{{ compra.fecha | date:'short' }}</p>
-        </ion-label>
-      </ion-item>
-    </div>
+    <ion-item lines="none" (click)="abrirModal(compra)">
+      <ion-avatar slot="start">
+        <img [src]="compra.imagen" alt="{{ compra.producto }}">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ compra.producto }}</h2>
+        <p>Cantidad: {{ compra.cantidad }} | Precio: ${{ compra.precio }}</p>
+        <p>Método: {{ compra.metodoPago }}</p>
+        <p class="fecha">{{ compra.fecha | date:'short' }}</p>
+      </ion-label>
+    </ion-item>
+
+   
   </div>
+
+  <!-- Modal Inline -->
+  <ion-modal #modal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalle de la Compra</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding" *ngIf="selectedCompra">
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img [src]="selectedCompra.imagen" alt="{{ selectedCompra.producto }}">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ selectedCompra.producto }}</h2>
+            <p>Cantidad: {{ selectedCompra.cantidad }}</p>
+            <p>Precio: ${{ selectedCompra.precio }}</p>
+            <p>Método de pago: {{ selectedCompra.metodoPago }}</p>
+            <p>Estado: {{ selectedCompra.estado }}</p>
+            <p>Fecha: {{ selectedCompra.fecha | date:'short' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <!-- Timeline vertical en modal -->
+        <div class="timeline-vertical">
+          <div *ngFor="let estado of getTimeline(selectedCompra)" class="timeline-step">
+            <input type="radio" disabled [checked]="estado.done">
+            <label>{{ estado.label }}</label>
+          </div>
+        </div>
+
+        <div *ngIf="selectedCompra.estado === 'carrito' || selectedCompra.estado === 'pendiente'" class="acciones">
+          <ion-button color="success" (click)="pagar(selectedCompra)">Pagar ahora</ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>
