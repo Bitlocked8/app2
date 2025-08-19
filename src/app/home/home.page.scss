@@ -1,10 +1,105 @@
-.login-container {
+ion-content {
+  --background: linear-gradient(180deg, #e6f7ff 0%, #b3e0f7 50%, #80c7f2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
+}
+
+.login-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  max-width: 400px;
-  margin: 0 auto;
+  align-items: center;
+  justify-content: center; // 👈 centra el contenido dentro
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  min-height: 400px; // 👈 opcional, para que el form no quede muy aplastado
+}
+
+form {
+  width: 100%;
+}
+
+
+ion-item {
+  --background: #ffffffcc; // semi-transparente
+  --border-radius: 12px;
+  margin: 12px 0;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.1);
+}
+
+ion-label {
+  color: #0077b6 !important; // azul marino agua
+  font-weight: 600;
+}
+
+ion-input {
+  color: #023e8a; // azul profundo
+  font-size: 16px;
+}
+
+.submit-button {
+  --background: linear-gradient(135deg, #0096c7, #00b4d8, #48cae4);
+  --border-radius: 25px;
+  --box-shadow: 0 6px 12px rgba(0, 150, 199, 0.4);
+  margin-top: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.4s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    --box-shadow: 0 8px 16px rgba(0, 150, 199, 0.6);
+    --background: linear-gradient(135deg, #00b4d8, #48cae4, #90e0ef);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.google-button {
+  --background: #ffffff;
+  --border-radius: 25px;
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  color: #333;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+
+  ion-icon {
+    color: #db4437; // rojo Google
+    margin-right: 6px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    --box-shadow: 0 8px 14px rgba(0, 0, 0, 0.25);
+
+    ion-icon {
+      transform: rotate(-10deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+
+.error-message {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .loading-overlay {
@@ -13,54 +108,22 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.8);
-  z-index: 10;
-  
+
   ion-spinner {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 16px;
+    --color: #0077b6;
+    margin-bottom: 12px;
   }
-  
+
   p {
-    margin: 0;
-    font-size: 16px;
-    color: #333;
+    color: #023e8a;
+    font-weight: bold;
   }
 }
 
-form {
-  width: 100%;
-}
-
-ion-item {
-  --background: #f8f9fa;
-  --border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.error-message {
-  text-align: center;
-  margin: 16px 0;
-}
-
-.submit-button {
-  --background: #3880ff;
-  margin-top: 8px;
-}
-
-.google-button {
-  --background: #f4f4f4;
-  --color: #3c4043;
-  border: 1px solid #dadce0;
-  margin-top: 8px;
-}
-
-.google-button ion-icon {
-  color: #4285F4;
-  margin-right: 8px;
+/* Animaciones sutiles */
+ion-button {
+  transition: transform 0.2s ease-in-out;
+  &:active {
+    transform: scale(0.96);
+  }
 }

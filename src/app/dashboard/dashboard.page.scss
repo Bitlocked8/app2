@@ -1,29 +1,51 @@
-/* Fuerza fondo blanco en la barra de tabs */
-ion-tab-bar.custom-tab-bar {
-  --background: white !important;
-  background: white !important;
-  border-top: none;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+.custom-tab-bar {
+  --background: #fff;
+  width: 90%;
+  margin: 8px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 4px 0;
+
+  border-top: none;      // elimina la raya superior
+  box-shadow: 0 4px 12px rgba(0, 119, 182, 0.12); // opcional: sombra suave
 }
 
-/* Estilo general para los botones */
-ion-tab-button.custom-tab {
-  --background: white !important;
-  --color: black !important;
-  --color-selected: black !important;
-  background: white !important;
+
+.custom-tab {
+  --background: transparent;
+
+  --color-selected: #0077b6;  // azul al seleccionar
+  --ripple-color: #90e0ef;
+
+  border-radius: 12px;
+  margin: 2px;
+  transition: all 0.2s ease-in-out;
+
+  .tab-icon {
+    font-size: 20px;
+  }
+
+  .tab-label {
+    font-size: 12px;
+    font-weight: 600;   // negrita solo aquí
+    display: block;     // evitar duplicados
+    line-height: 1.2;
+    margin: 0;          // elimina margen extra
+  }
 }
 
-/* Iconos e íconos con color negro */
-ion-tab-button.custom-tab ion-icon,
-ion-tab-button.custom-tab ion-label {
-  color: black !important;
+.custom-tab.ion-selected {
+  --background: #d0f0ff;  
+  --color: #0077b6;       
+
 }
 
-/* Estilo especial para el botón de salir */
-ion-tab-button.logout-tab,
-ion-tab-button.logout-tab ion-icon,
-ion-tab-button.logout-tab ion-label {
-  --color: #dc3545 !important;
-  color: #dc3545 !important;
+/* Logout */
+.logout-tab {
+  --color: #d62828;
+}
+
+.logout-tab.ion-selected {
+  --background: #ffd6d6;
+  --color: #d62828;
 }
