@@ -58,6 +58,7 @@ export class DashboardPage {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar sesión',
       message: '¿Estás seguro de que quieres salir?',
+      cssClass: 'custom-alert', // <- Clase personalizada
       buttons: [
         {
           text: 'Cancelar',
@@ -75,4 +76,5 @@ export class DashboardPage {
 
     await alert.present();
   }
+
 }

@@ -1,51 +1,92 @@
+/* ================= TAB-BAR FLOTANTE ================= */
 .custom-tab-bar {
-  --background: #fff;
-  width: 90%;
-  margin: 8px auto;
-  border-radius: 10px;
-  overflow: hidden;
+  position: absolute;       // flota sobre el contenido
+  bottom: 12px;             // separación del borde inferior
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;               // ancho del tab-bar
+  border-radius: 12px;
+  --background: #ffffff;    // fondo blanco
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;              // siempre encima del contenido
+  display: flex;
+  justify-content: center;
   padding: 4px 0;
-
-  border-top: none;      // elimina la raya superior
-  box-shadow: 0 4px 12px rgba(0, 119, 182, 0.12); // opcional: sombra suave
+  border-top: none;
 }
 
+/* Contenedor de botones dentro del tab-bar */
+.custom-tab-bar .tab-button-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  border-radius: 12px;
+  overflow: hidden;
+}
 
+/* ================= BOTONES DE TAB ================= */
 .custom-tab {
   --background: transparent;
-
-  --color-selected: #0077b6;  // azul al seleccionar
+  --color-selected: #0077b6;  
   --ripple-color: #90e0ef;
-
   border-radius: 12px;
   margin: 2px;
   transition: all 0.2s ease-in-out;
 
   .tab-icon {
     font-size: 20px;
+    color: #555; // icono no seleccionado
   }
 
   .tab-label {
     font-size: 12px;
-    font-weight: 600;   // negrita solo aquí
-    display: block;     // evitar duplicados
+    font-weight: 600;
+    color: #555; // texto no seleccionado
+    display: block;
     line-height: 1.2;
-    margin: 0;          // elimina margen extra
+    margin: 0;
   }
 }
 
+/* ESTADO SELECCIONADO */
 .custom-tab.ion-selected {
   --background: #d0f0ff;  
-  --color: #0077b6;       
+  --color: #0077b6;
 
+  .tab-icon {
+    color: #0077b6; // icono azul al seleccionar
+  }
+
+  .tab-label {
+    color: #0077b6;  // label azul al seleccionar
+  }
 }
 
-/* Logout */
+/* ================= LOGOUT ================= */
 .logout-tab {
   --color: #d62828;
+
+  .tab-icon, .tab-label {
+    color: #d62828;
+  }
 }
 
 .logout-tab.ion-selected {
   --background: #ffd6d6;
   --color: #d62828;
+
+  .tab-icon, .tab-label {
+    color: #d62828;
+  }
+}
+
+/* ================= GENERAL ION-TABS ================= */
+ion-tabs {
+  height: 100vh;          // toda la pantalla
+  display: flex;
+  flex-direction: column;
+}
+
+ion-router-outlet {
+  flex: 1;                // contenido de cada tab ocupa todo el espacio
 }
