@@ -1,9 +1,11 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar, 
-  IonModal, IonButton, IonButtons, IonSegment, IonSegmentButton, IonList, IonText, IonInput 
+import {
+  IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar, IonGrid,    // <- agregado
+  IonRow,     // <- agregado
+  IonCol,
+  IonModal, IonButton, IonButtons, IonSegment, IonSegmentButton, IonList, IonText, IonInput
 } from '@ionic/angular/standalone';
 import { HistorialService, Compra } from '../services/historial.service';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
@@ -25,6 +27,9 @@ import { Subscription } from 'rxjs';
     IonLabel,
     IonAvatar,
     IonModal,
+    IonGrid,    // <- agregado
+    IonRow,     // <- agregado
+    IonCol,
     IonButton,
     IonButtons,
     IonSegment,
@@ -71,33 +76,50 @@ export class SearchPage implements OnDestroy {
   }
 
   getTimeline(compra: Compra) {
-    const timeline = [];
+    const timeline: { label: string; descripcion: string; done: boolean; fecha: Date }[] = [];
+
     if (compra.estado === 'carrito' || compra.estado === 'pendiente') {
-      timeline.push({ label: 'Falta pagar', done: false });
-    } else if (compra.estado === 'pagado' || compra.estado === 'enviado' || compra.estado === 'recibido') {
-      timeline.push({ label: 'Pago realizado', done: true });
+      timeline.push({
+        label: 'Falta pagar',
+        descripcion: 'Aún no se ha confirmado el pago.',
+        fecha: compra.fecha,
+        done: false
+      });
     }
 
-    if (compra.estado === 'pagado' || compra.estado === 'enviado' || compra.estado === 'recibido') {
-      timeline.push({ label: 'Empaquetado', done: compra.estado !== 'pagado' });
-    } else {
-      timeline.push({ label: 'Empaquetado', done: false });
+    if (['pagado', 'enviado', 'recibido'].includes(compra.estado)) {
+      timeline.push({
+        label: 'Pago realizado',
+        descripcion: 'Tu pago fue confirmado exitosamente.',
+        fecha: compra.fecha,
+        done: true
+      });
     }
 
-    if (compra.estado === 'enviado' || compra.estado === 'recibido') {
-      timeline.push({ label: 'Enviado', done: true });
-    } else {
-      timeline.push({ label: 'Enviado', done: false });
-    }
+    timeline.push({
+      label: 'Empaquetado',
+      descripcion: 'El pedido está siendo preparado.',
+      fecha: compra.fecha,
+      done: ['enviado', 'recibido'].includes(compra.estado)
+    });
 
-    if (compra.estado === 'recibido') {
-      timeline.push({ label: 'Recibido', done: true });
-    } else {
-      timeline.push({ label: 'Recibido', done: false });
-    }
+    timeline.push({
+      label: 'Enviado',
+      descripcion: 'Tu pedido ya salió y está en camino.',
+      fecha: compra.fecha,
+      done: ['enviado', 'recibido'].includes(compra.estado)
+    });
+
+    timeline.push({
+      label: 'Recibido',
+      descripcion: '¡Tu compra llegó con éxito!',
+      fecha: compra.fecha,
+      done: compra.estado === 'recibido'
+    });
 
     return timeline;
   }
+
 
   get notificacionesFiltradas(): Notificacion[] {
     return this.notificaciones.filter(n => n.mensaje.includes(this.selectedCompra?.producto ?? ''));

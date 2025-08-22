@@ -1,9 +1,10 @@
 <ion-content class="ion-padding">
-
+  <!-- Estado vacío -->
   <div *ngIf="compras.length === 0" class="empty-state">
     <p>No hay compras registradas aún.</p>
   </div>
 
+  <!-- Lista de compras -->
   <div *ngFor="let compra of compras" class="timeline-item">
     <ion-item lines="none" (click)="abrirModal(compra)">
       <ion-avatar slot="start">
@@ -18,103 +19,98 @@
     </ion-item>
   </div>
 
-  <ion-modal #modal>
+  <!-- Modal dinámico -->
+  <ion-modal #modal [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]" *ngIf="selectedCompra">
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Detalle de la Compra</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+      <ion-content class="ion-padding">
+        <!-- Header compra -->
+        <ion-grid>
+          <ion-row>
+            <!-- Columna 1: Imagen cuadrada + Nombre -->
+            <ion-col size="4" class="ion-text-center">
+              <img [src]="selectedCompra.imagen" alt="{{ selectedCompra.producto }}"
+                style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+              <h2>{{ selectedCompra.producto }}</h2>
+            </ion-col>
 
-      <ion-content class="ion-padding" *ngIf="selectedCompra">
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img [src]="selectedCompra.imagen" alt="{{ selectedCompra.producto }}">
-          </ion-avatar>
-          <ion-label>
-            <h2>{{ selectedCompra.producto }}</h2>
-            <p>Cantidad: {{ selectedCompra.cantidad }}</p>
-            <p>Precio: ${{ selectedCompra.precio }}</p>
-            <p>Método de pago: {{ selectedCompra.metodoPago }}</p>
-            <p>Estado: {{ selectedCompra.estado }}</p>
-            <p>Fecha: {{ selectedCompra.fecha | date:'short' }}</p>
-          </ion-label>
-        </ion-item>
+            <!-- Columna 2: Detalles -->
+            <ion-col size="8">
+              <p>Cantidad: {{ selectedCompra.cantidad }}</p>
+              <p>Precio: ${{ selectedCompra.precio }}</p>
+              <p>Método de pago: {{ selectedCompra.metodoPago }}</p>
+              <p>Estado: {{ selectedCompra.estado }}</p>
+              <p>Fecha: {{ selectedCompra.fecha | date:'short' }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
 
+
+
+        <!-- Timeline estado -->
         <div class="timeline-vertical">
-          <div *ngFor="let estado of getTimeline(selectedCompra)" class="timeline-step">
-            <input type="radio" disabled [checked]="estado.done">
-            <label>{{ estado.label }}</label>
+          <div *ngFor="let estado of getTimeline(selectedCompra!)" class="timeline-step">
+            <div class="circle" [class.done]="estado.done"></div>
+            <div class="timeline-content">
+              <h4>{{ estado.label }}</h4>
+              <p>{{ estado.descripcion }}</p>
+              <small>📅 {{ estado.fecha | date:'short' }}</small>
+            </div>
           </div>
         </div>
 
+
+        <!-- Métodos de pago -->
         <div *ngIf="selectedCompra.estado === 'carrito' || selectedCompra.estado === 'pendiente'" class="acciones">
-        
+          <ion-segment [(ngModel)]="metodoPagoAhora">
+            <ion-segment-button value="qr">QR</ion-segment-button>
+            <ion-segment-button value="tarjeta">Tarjeta</ion-segment-button>
+            <ion-segment-button value="paypal">PayPal</ion-segment-button>
+          </ion-segment>
 
-          <div *ngIf="metodoPago === 'contado'">
-            <ion-segment [(ngModel)]="metodoPagoAhora">
-              <ion-segment-button value="qr">QR</ion-segment-button>
-              <ion-segment-button value="tarjeta">Tarjeta</ion-segment-button>
-              <ion-segment-button value="paypal">PayPal</ion-segment-button>
-            </ion-segment>
-
-            <div *ngIf="metodoPagoAhora === 'qr'" style="text-align:center; margin-top: 16px;">
-              <p>Escanea este código QR para pagar:</p>
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago" style="margin: 10px auto; display:block;">
-              <ion-item>
-                <ion-label>Subir comprobante</ion-label>
-                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-              </ion-item>
-            </div>
-
-            <div *ngIf="metodoPagoAhora === 'tarjeta'">
-              <ion-item>
-                <ion-label position="floating">Número de tarjeta</ion-label>
-                <ion-input type="text"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">Fecha de expiración</ion-label>
-                <ion-input type="month"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">CVV</ion-label>
-                <ion-input type="number" maxlength="3"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label>Subir comprobante</ion-label>
-                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-              </ion-item>
-            </div>
-
-            <div *ngIf="metodoPagoAhora === 'paypal'" style="margin-top: 16px;">
-              <p><strong>Datos de la empresa para el pago:</strong></p>
-              <ion-list>
-                <ion-item>
-                  <ion-label>Email PayPal:</ion-label>
-                  <ion-text>empresa-fake@paypal.com</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Nombre:</ion-label>
-                  <ion-text>Empresa Ejemplo SRL</ion-text>
-                </ion-item>
-              </ion-list>
-              <p style="margin-top: 10px;">Envíe el pago a los datos indicados y suba el comprobante.</p>
-              <ion-item>
-                <ion-label>Subir comprobante</ion-label>
-                <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-              </ion-item>
-            </div>
-
+          <!-- Pago con QR -->
+          <div *ngIf="metodoPagoAhora === 'qr'" style="text-align:center; margin-top: 16px;">
+            <p>Escanea este código QR para pagar:</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago"
+              style="margin: 10px auto; display:block;">
+            <ion-item>
+              <ion-label>Subir comprobante</ion-label>
+              <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+            </ion-item>
           </div>
-            <ion-button color="success" [disabled]="!comprobanteSubido" (click)="pagar(selectedCompra)">
+
+          <!-- Pago con tarjeta -->
+          <div *ngIf="metodoPagoAhora === 'tarjeta'" class="inputs-custom">
+            <ion-label position="stacked">Número de tarjeta</ion-label>
+            <ion-input type="text" placeholder="1234 5678 9012 3456"></ion-input>
+
+            <ion-label position="stacked">Fecha de expiración</ion-label>
+            <ion-input type="text" maxlength="5" placeholder="MM/AA"></ion-input>
+
+            <ion-label position="stacked">CVV</ion-label>
+            <ion-input type="number" maxlength="3" placeholder="123"></ion-input>
+
+            <ion-label>Subir comprobante</ion-label>
+            <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+          </div>
+
+          <!-- Pago con PayPal -->
+          <div *ngIf="metodoPagoAhora === 'paypal'" class="inputs-custom" style="margin-top: 16px;">
+            <p><strong>Datos de la empresa para el pago:</strong></p>
+
+            <p>Email PayPal: <span class="highlight">empresa-fake@paypal.com</span></p>
+            <p>Nombre: <span class="highlight">Empresa Ejemplo SRL</span></p>
+
+            <p style="margin-top: 10px;">Envíe el pago y suba el comprobante.</p>
+            <ion-label>Subir comprobante</ion-label>
+            <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
+          </div>
+
+          <!-- Botón pagar -->
+          <ion-button color="success" expand="block" [disabled]="!comprobanteSubido" (click)="pagar(selectedCompra)">
             Pagar ahora
           </ion-button>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
-
 </ion-content>

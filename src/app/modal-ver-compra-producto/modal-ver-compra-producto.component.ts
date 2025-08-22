@@ -26,11 +26,16 @@ export class ModalVerCompraProductoComponent implements OnInit {
   @Input() producto: any;
 
   productoSeleccionado = {
-    color: '',
-    bundle: '',
-    enchufe: '',
-    cantidad: 1,
-  };
+  color: '',
+  bundle: '',
+  enchufe: '',
+  cantidad: 1,
+  tarjeta: {
+    numero: '',
+    expiracion: '',
+    cvv: ''
+  }
+};
 
   metodoPago: string = 'despues';
   metodoPagoAhora: string = '';
@@ -170,4 +175,38 @@ export class ModalVerCompraProductoComponent implements OnInit {
   verTodosLosComentarios() {
     console.log('Ver todos los comentarios');
   }
+  async confirmarPagoDespues() {
+    this.historialService.addCompra({
+      producto: this.producto.nombre,
+      imagen: this.producto.imagen,
+      precio: parseFloat(this.producto.precio),
+      metodoPago: 'pagar después',
+      fecha: new Date(),
+      cantidad: this.productoSeleccionado.cantidad,
+      estado: 'pendiente'
+    });
+
+    this.notiService.agregar(
+      `Pedido realizado para "${this.producto.nombre}", pendiente de pago en 24h.`,
+      'pendiente'
+    );
+
+    const toast = await this.toastCtrl.create({
+      message: 'Pedido guardado. Tienes 24h para completar el pago.',
+      duration: 3000,
+      color: 'warning',
+      position: 'bottom',
+      icon: 'time-outline'
+    });
+    await toast.present();
+  }
+  formatearFechaExp(event: any) {
+    let valor = event.target.value.replace(/\D/g, ''); // quitar no números
+    if (valor.length >= 3) {
+      valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
+    }
+    event.target.value = valor;
+  }
+
+
 }
