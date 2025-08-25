@@ -1,140 +1,83 @@
-<ion-content>
+<ion-content class="modal-producto-content">
   <ion-grid>
 
-    <!-- Fila principal: imagen/nombre y precios -->
+    <!-- Imagen del producto -->
     <ion-row>
-      <!-- Columna izquierda: imagen y nombre -->
-      <ion-col size="5">
-        <img [src]="producto?.imagen" alt="{{ producto?.nombre }}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
-        <h2>{{ producto?.nombre }}</h2>
-      </ion-col>
-
-      <!-- Columna derecha: precios, cantidad, total -->
-      <ion-col size="7">
-        <ion-row align-items-center>
-          <ion-col size="6">
-            <p><strong>Antes:</strong> <s>${{ (producto?.precio * 1.2) | number:'1.2-2' }}</s></p>
-          </ion-col>
-          <ion-col size="6">
-            <p>
-              <strong>Ahora:</strong> ${{ producto?.precio }}
-              <ion-badge color="danger">
-                Ahorra ${{ ((producto?.precio * 1.2) - producto?.precio) | number:'1.2-2' }}
-              </ion-badge>
-            </p>
-          </ion-col>
-        </ion-row>
-
-        <ion-row>
-          <ion-col size="12">
-            <ion-label position="stacked">Cantidad</ion-label>
-            <ion-input type="number" [(ngModel)]="productoSeleccionado.cantidad" min="1" [max]="producto?.stock"
-              inputmode="numeric"></ion-input>
-          </ion-col>
-        </ion-row>
-
-        <ion-row>
-          <ion-col size="12">
-            <ion-label>Precio total:</ion-label>
-            <ion-badge>${{ precioTotal }}</ion-badge>
-            <ion-col *ngIf="descuentoAplicado">
-              <ion-label color="danger">{{ descuentoAplicado }}</ion-label>
-            </ion-col>
-          </ion-col>
-        </ion-row>
+      <ion-col size="12" class="image-container">
+        <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
       </ion-col>
     </ion-row>
 
-    <!-- Método de pago principal -->
+    <!-- Nombre y capacidad -->
     <ion-row>
       <ion-col size="12">
-        <ion-label><strong>Método de pago</strong></ion-label>
-        <ion-segment [(ngModel)]="metodoPago" value="despues" color="light">
-          <ion-segment-button value="contado">
-            <ion-label>Al contado</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="despues">
-            <ion-label>Pagar después</ion-label>
-          </ion-segment-button>
-        </ion-segment>
+        <!-- Nombre y capacidad -->
+        <h2 class="nombre-producto">{{ producto.nombre }}</h2>
+        <p class="capacidad">{{ producto.capacidad }} {{ producto.unidad }}</p>
       </ion-col>
     </ion-row>
 
-    <!-- Métodos de pago ahora -->
-    <ion-row *ngIf="metodoPago === 'contado'">
-      <ion-col size="12">
-        <ion-label><strong>Método de pago ahora</strong></ion-label>
-        <ion-segment [(ngModel)]="metodoPagoAhora" color="light">
-          <ion-segment-button value="tarjeta">
-            <ion-label>Tarjeta</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="paypal">
-            <ion-label>PayPal</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="qr">
-            <ion-label>QR</ion-label>
-          </ion-segment-button>
-        </ion-segment>
+    <!-- Precios como badges -->
+    <ion-row class="precio-row">
+      <ion-col size="auto">
+        <ion-badge color="secondary" class="precio-badge">
+          Precio: $ {{ producto.precioReferencia }}
+        </ion-badge>
+      </ion-col>
+
+      <ion-col size="auto" *ngIf="producto.precioReferencia2">
+        <ion-badge color="danger" class="precio-badge">
+          Oferta: $ {{ producto.precioReferencia2 }}
+        </ion-badge>
+      </ion-col>
+
+      <ion-col size="auto" *ngIf="producto.precioReferencia3">
+        <ion-badge color="tertiary" class="precio-badge">
+          Referencia: $ {{ producto.precioReferencia3 }}
+        </ion-badge>
       </ion-col>
     </ion-row>
 
-    <!-- Detalles de pago -->
-    <ion-row *ngIf="metodoPago === 'contado'">
+
+
+    <!-- Observaciones -->
+    <ion-row *ngIf="producto.observaciones">
       <ion-col size="12">
-
-        <!-- Tarjeta -->
-        <div *ngIf="metodoPagoAhora === 'tarjeta'" class="pago-detalle">
-          <ion-label position="floating">Número de tarjeta</ion-label>
-          <ion-input type="text" placeholder="1234 5678 9012 3456" [(ngModel)]="productoSeleccionado.tarjeta.numero"></ion-input>
-
-          <ion-label position="floating">Fecha de expiración</ion-label>
-          <ion-input type="text" maxlength="5" placeholder="MM/AA" [(ngModel)]="productoSeleccionado.tarjeta.expiracion"
-            (ionInput)="formatearFechaExp($event)">
-          </ion-input>
-
-          <ion-label position="floating">CVV</ion-label>
-          <ion-input type="number" maxlength="3" placeholder="123" [(ngModel)]="productoSeleccionado.tarjeta.cvv"></ion-input>
-
-          <ion-label>Subir comprobante</ion-label>
-          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-        </div>
-
-        <!-- PayPal -->
-        <div *ngIf="metodoPagoAhora === 'paypal'" class="pago-detalle">
-          <ion-label>Email PayPal:</ion-label>
-          <ion-input placeholder="empresa-fake@paypal.com"></ion-input>
-          <ion-label>Nombre:</ion-label>
-          <ion-input placeholder="Empresa Ejemplo SRL"></ion-input>
-          <ion-label>Subir comprobante</ion-label>
-          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-        </div>
-
-        <!-- QR -->
-        <div *ngIf="metodoPagoAhora === 'qr'" class="pago-detalle">
-          <p>Escanea este código QR para pagar:</p>
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pago%20Fake" alt="QR de pago">
-          <ion-label>Subir comprobante</ion-label>
-          <input type="file" accept="image/*" (change)="onComprobanteSubido($event)" />
-        </div>
-
+        <ion-badge color="light" class="observaciones-badge">
+          {{ producto.observaciones }}
+        </ion-badge>
       </ion-col>
     </ion-row>
 
-    <!-- Pago después -->
-    <ion-row *ngIf="metodoPago === 'despues'">
+
+    <!-- Etiquetas visuales de Base y Tapa -->
+    <ion-row class="spec-row">
+      <ion-col size="auto">
+        <div class="spec-badge base">{{ producto.base_id }}</div>
+      </ion-col>
+      <ion-col size="auto">
+        <div class="spec-badge tapa">{{ producto.tapa_id }}</div>
+      </ion-col>
+    </ion-row>
+
+
+    <!-- Cantidad -->
+    <ion-row>
       <ion-col size="12">
-        <p>Recuerde que el pago estará disponible solo durante 24 horas para completar.</p>
-        <ion-button expand="block" color="primary" (click)="confirmarPagoDespues()">
-          Confirmar pago después
+        <ion-item class="cantidad-item">
+          <ion-label position="stacked">Cantidad</ion-label>
+          <ion-input type="number" [(ngModel)]="productoSeleccionado.cantidad" min="1" inputmode="numeric"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+
+    <!-- Botón Añadir al carrito -->
+    <ion-row>
+      <ion-col size="12">
+        <ion-button expand="block"  (click)="agregarAlCarrito()">
+          Añadir al carrito
         </ion-button>
-      </ion-col>
-    </ion-row>
-
-    <!-- Botón Comprar ahora -->
-    <ion-row>
-      <ion-col size="12">
-        <ion-button *ngIf="metodoPago === 'contado'" color="dark" (click)="hacerPedido()" shape="round"
-          [disabled]="!comprobanteSubido">Comprar ahora</ion-button>
       </ion-col>
     </ion-row>
 

@@ -3,21 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import {
-  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonSegment, IonSegmentButton,
-  IonSelect, IonText, IonSelectOption, IonInput, IonItem, IonBadge, IonAccordionGroup,
-  IonAccordion, IonList
+  IonContent, IonGrid, IonRow, IonCol, IonButton, IonLabel, IonInput, IonItem, IonBadge
 } from '@ionic/angular/standalone';
 
 import { NotificacionesService } from '../services/notificaciones.service';
-import { HistorialService, Compra } from '../services/historial.service';
+import { HistorialService } from '../services/historial.service';
 
 @Component({
   selector: 'app-modal-ver-compra-producto',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, IonSegment, IonSegmentButton, IonSelect,
-    IonSelectOption, IonText, IonContent, IonGrid, IonRow, IonCol, IonButton,
-    IonLabel, IonInput, IonItem, IonBadge, IonAccordionGroup, IonAccordion, IonList
+    CommonModule, FormsModule, IonContent, IonGrid, IonRow, IonCol, IonButton,
+    IonLabel, IonInput, IonItem, IonBadge
   ],
   templateUrl: './modal-ver-compra-producto.component.html',
   styleUrls: ['./modal-ver-compra-producto.component.scss'],
@@ -26,24 +23,11 @@ export class ModalVerCompraProductoComponent implements OnInit {
   @Input() producto: any;
 
   productoSeleccionado = {
-  color: '',
-  bundle: '',
-  enchufe: '',
-  cantidad: 1,
-  tarjeta: {
-    numero: '',
-    expiracion: '',
-    cvv: ''
-  }
-};
+    cantidad: 1,
+  };
 
   metodoPago: string = 'despues';
   metodoPagoAhora: string = '';
-  pagoDespuesDatos = { email: '', telefono: '' };
-
-  precioOriginalCalculado = 0;
-  precioAhorroCalculado = 0;
-
   comprobanteSubido: boolean = false;
 
   constructor(
@@ -53,22 +37,23 @@ export class ModalVerCompraProductoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.calcularPrecioAnteriorYDescuento();
+    this.producto.imagen = this.getImagenUrl(this.producto.imagen);
   }
 
-  calcularPrecioAnteriorYDescuento() {
-    const porcentajeAumento = Math.floor(Math.random() * 15) + 10;
-    const precioActual = parseFloat(this.producto?.precio ?? '0');
-
-    this.precioOriginalCalculado = +(precioActual * (1 + porcentajeAumento / 100)).toFixed(2);
-    this.precioAhorroCalculado = +(this.precioOriginalCalculado - precioActual).toFixed(2);
+  // Método helper
+  getImagenUrl(imagen: string | null): string {
+    if (!imagen) return `https://picsum.photos/300/300?random=${this.producto.id}`; // fallback
+    if (imagen.startsWith('http')) return imagen; // ya es URL absoluta
+    if (imagen.startsWith('storage/')) return `http://127.0.0.1:8000/${imagen}`; // path relativo
+    return `http://127.0.0.1:8000/storage/${imagen}`; // solo nombre de archivo
   }
+
 
   async agregarAlCarrito() {
     this.historialService.addCompra({
       producto: this.producto.nombre,
       imagen: this.producto.imagen,
-      precio: parseFloat(this.producto.precio),
+      precio: parseFloat(this.producto.precioReferencia),
       metodoPago: this.metodoPago === 'contado' ? this.metodoPagoAhora : 'pagar después',
       fecha: new Date(),
       cantidad: this.productoSeleccionado.cantidad,
@@ -76,12 +61,12 @@ export class ModalVerCompraProductoComponent implements OnInit {
     });
 
     this.notiService.agregar(
-      `Producto "${this.producto.nombre}" añadido al carrito, cantidad: ${this.productoSeleccionado.cantidad}.`,
+      `Producto "${this.producto.nombre}" añadido al carrito.`,
       'carrito'
     );
 
     const toast = await this.toastCtrl.create({
-      message: 'Producto añadido al carrito correctamente.',
+      message: 'Producto añadido al carrito.',
       duration: 2000,
       color: 'success',
       position: 'bottom',
@@ -91,24 +76,12 @@ export class ModalVerCompraProductoComponent implements OnInit {
   }
 
   async hacerPedido() {
-    if (!this.comprobanteSubido && this.metodoPago === 'contado') {
-      const toast = await this.toastCtrl.create({
-        message: 'Debes subir el comprobante antes de comprar.',
-        duration: 2000,
-        color: 'danger',
-        position: 'bottom',
-        icon: 'alert-circle-outline'
-      });
-      await toast.present();
-      return;
-    }
-
     const estadoFinal = this.metodoPago === 'contado' ? 'pagado' : 'pendiente';
 
     this.historialService.addCompra({
       producto: this.producto.nombre,
       imagen: this.producto.imagen,
-      precio: parseFloat(this.producto.precio),
+      precio: parseFloat(this.producto.precioReferencia),
       metodoPago: this.metodoPagoAhora,
       fecha: new Date(),
       cantidad: this.productoSeleccionado.cantidad,
@@ -134,7 +107,6 @@ export class ModalVerCompraProductoComponent implements OnInit {
     await toast.present();
   }
 
-
   onComprobanteSubido(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -144,69 +116,9 @@ export class ModalVerCompraProductoComponent implements OnInit {
   }
 
   get precioTotal(): string {
-    const precioUnitario = parseFloat(this.producto.precio);
+    const precioUnitario = parseFloat(this.producto.precioReferencia);
     const cantidad = this.productoSeleccionado.cantidad;
-    let descuento = 0;
-
-    if (cantidad >= 10) descuento += 0.10;
-
-    const hoy = new Date();
-    const eventos: { [key: string]: number } = { '12-25': 0.20, '01-01': 0.15 };
-    const key = hoy.toISOString().slice(5, 10);
-    if (eventos[key]) descuento += eventos[key];
-
-    const total = precioUnitario * cantidad * (1 - descuento);
+    const total = precioUnitario * cantidad;
     return `${total.toFixed(2)} Bs.`;
   }
-
-  get descuentoAplicado(): string {
-    const cantidad = this.productoSeleccionado.cantidad;
-    let descuento = 0;
-
-    if (cantidad >= 10) descuento += 10;
-
-    const hoy = new Date().toISOString().slice(5, 10);
-    if (hoy === '12-25') descuento += 20;
-    else if (hoy === '01-01') descuento += 15;
-
-    return descuento > 0 ? `-${descuento}% de descuento aplicado` : '';
-  }
-
-  verTodosLosComentarios() {
-    console.log('Ver todos los comentarios');
-  }
-  async confirmarPagoDespues() {
-    this.historialService.addCompra({
-      producto: this.producto.nombre,
-      imagen: this.producto.imagen,
-      precio: parseFloat(this.producto.precio),
-      metodoPago: 'pagar después',
-      fecha: new Date(),
-      cantidad: this.productoSeleccionado.cantidad,
-      estado: 'pendiente'
-    });
-
-    this.notiService.agregar(
-      `Pedido realizado para "${this.producto.nombre}", pendiente de pago en 24h.`,
-      'pendiente'
-    );
-
-    const toast = await this.toastCtrl.create({
-      message: 'Pedido guardado. Tienes 24h para completar el pago.',
-      duration: 3000,
-      color: 'warning',
-      position: 'bottom',
-      icon: 'time-outline'
-    });
-    await toast.present();
-  }
-  formatearFechaExp(event: any) {
-    let valor = event.target.value.replace(/\D/g, ''); // quitar no números
-    if (valor.length >= 3) {
-      valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
-    }
-    event.target.value = valor;
-  }
-
-
 }

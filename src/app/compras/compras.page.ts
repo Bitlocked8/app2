@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 
 import {
   IonContent,
-
   IonIcon,
   IonButton,
   IonGrid,
@@ -26,12 +25,10 @@ import {
 
 import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/modal-ver-compra-producto.component';
 import { ModalVerNotificacionesComponent } from '../modal-ver-notificaciones/modal-ver-notificaciones.component';
+import { NotificacionesService } from '../services/notificaciones.service';
+import { ProductosService, Producto } from '../services/productos.service';
 
-import { NotificacionesService } from '../services/notificaciones.service'; // Asegúrate que esta ruta es correcta
-
-addIcons({
-  'notifications-outline': notificationsOutline,
-});
+addIcons({ 'notifications-outline': notificationsOutline });
 
 @Component({
   selector: 'app-compras',
@@ -42,7 +39,6 @@ addIcons({
     CommonModule,
     FormsModule,
     IonContent,
-
     IonButton,
     IonIcon,
     IonBadge,
@@ -59,32 +55,37 @@ addIcons({
   ],
 })
 export class ComprasPage implements OnInit, OnDestroy {
-  productos = Array.from({ length: 10 }).map((_, i) => ({
-    id: i,
-    nombre: `Agua embotellada ${i + 1}L`,
-    precio: (5 + i).toFixed(2),
-    imagen: `https://picsum.photos/200/200?random=${i}`,
-    vendedor: 'Agua Fresh',
-    reputacion: '⭐⭐⭐⭐☆',
-  }));
-
-  productosFiltrados: any[] = [];
+  productos: Producto[] = [];
+  productosFiltrados: Producto[] = [];
   busqueda = '';
-
   notificacionesNoLeidas = 0;
+
   private notiSub!: Subscription;
 
   constructor(
     private modalCtrl: ModalController,
-    private notiService: NotificacionesService
+    private notiService: NotificacionesService,
+    private productosService: ProductosService
   ) { }
 
   ngOnInit() {
-    this.productosFiltrados = [...this.productos];
-
-    // Suscribirse a notificaciones para contar las no leídas
+    // Suscribirse a notificaciones
     this.notiSub = this.notiService.getObservable().subscribe(notiList => {
       this.notificacionesNoLeidas = notiList.filter(n => !n.leida).length;
+    });
+
+    // Obtener productos desde la API
+    this.productosService.getProductos().subscribe({
+      next: (data) => {
+        this.productos = data.map(p => ({
+          ...p,
+          imagen: p.imagen
+            ? `http://127.0.0.1:8000/storage/${p.imagen}`
+            : `https://picsum.photos/200/200?random=${p.id}`,
+        }));
+        this.productosFiltrados = [...this.productos];
+      },
+      error: (err) => console.error('Error al traer productos:', err)
     });
   }
 
@@ -99,22 +100,15 @@ export class ComprasPage implements OnInit, OnDestroy {
     );
   }
 
-  loadData(event: any) {
-    setTimeout(() => {
-      const next = this.productos.length;
-      const nuevos = Array.from({ length: 5 }).map((_, i) => ({
-        id: next + i,
-        nombre: `Agua embotellada ${next + i + 1}L`,
-        precio: (5 + next + i).toFixed(2),
-        imagen: `https://picsum.photos/200/200?random=${next + i}`,
-        vendedor: 'Agua Fresh',
-        reputacion: '⭐⭐⭐⭐☆',
-      }));
-
-      this.productos.push(...nuevos);
-      this.filtrarProductos();
-      event.target.complete();
-    }, 1000);
+  async verProducto(producto: Producto) {
+    const modal = await this.modalCtrl.create({
+      component: ModalVerCompraProductoComponent,
+      componentProps: { producto },
+      breakpoints: [0, 0.7, 1],
+      initialBreakpoint: 0.7,
+      showBackdrop: true
+    });
+    await modal.present();
   }
 
   async verNotificaciones() {
@@ -124,21 +118,11 @@ export class ComprasPage implements OnInit, OnDestroy {
       initialBreakpoint: 0.5,
       showBackdrop: true
     });
-
     await modal.present();
   }
 
-  async verProducto(producto: any) {
-    const modal = await this.modalCtrl.create({
-      component: ModalVerCompraProductoComponent,
-      componentProps: {
-        producto: producto
-      },
-      breakpoints: [0, 0.7, 1],
-      initialBreakpoint: 0.7,
-      showBackdrop: true
-    });
-
-    await modal.present();
+  loadData(event: any) {
+    // Solo completar scroll infinito
+    event.target.complete();
   }
 }

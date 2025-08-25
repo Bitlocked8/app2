@@ -1,67 +1,135 @@
-ion-content {
-  --background: #f8f8f8;
-  font-family: 'Segoe UI', sans-serif;
-  color: #000000;
-}
-
-ion-label, p, h2, ion-text {
-  color: #000000 !important;
-}
-
-ion-item {
-  --background: #ffffff;
-  --color: #000000;
-  --border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-/* Inputs aqua con texto blanco */
-ion-input {
-  --background: #00bcd4;   /* aqua */
-  --color: #ffffff;        /* texto dentro */
-  --placeholder-color: rgba(255,255,255,0.8);
-  --padding-start: 12px;
-  border-radius: 10px;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
-/* Labels flotantes en blanco cuando están activos */
-ion-item ion-label {
-  color: #000000; /* negro cuando está arriba */
-}
-
-ion-item.ion-focused ion-label {
-  color: #ffffff !important; /* blanco cuando el input está activo */
-}
-
-ion-segment {
-  --background: #ffffff;
-  border-radius: 12px;
-  margin: 10px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-ion-segment-button {
-  --color: #000000;
-  --color-checked: #ffffff;
-  --background-checked: #00bcd4; /* aqua cuando está activo */
-  font-weight: 500;
-}
-
-ion-button {
-  --background: #000000;
-  --color: #ffffff;
-  border-radius: 20px;
-  font-weight: 500;
-  margin-top: 12px;
-}
-
-.pago-detalle {
-  background: #ffffff;
+.modal-producto-content {
+  --background: #f9f9f9; // fondo claro
   padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-top: 12px;
+
+  .image-container {
+    text-align: center;
+    margin-bottom: 16px;
+
+    img {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    img:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .nombre-producto {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 4px;
+  }
+
+  .capacidad {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  /* Precios en badges, uno al lado del otro */
+  .precio-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    ion-badge {
+      flex: 1;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff !important;
+      padding: 10px 0;
+      text-align: center;
+      border-radius: 12px;
+    }
+
+    ion-badge[color="secondary"] {
+      background-color: #607d8b;
+    }
+
+    // gris
+    ion-badge[color="danger"] {
+      background-color: #e91e63;
+    }
+
+    // rosa/rojo
+    ion-badge[color="tertiary"] {
+      background-color: #00bcd4;
+    }
+
+    // cyan
+  }
+
+  /* Spec badges (Base / Tapa) */
+  .spec-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #fff;
+    margin-right: 8px;
+    margin-bottom: 12px;
+
+    &.base {
+      background-color: #00bcd4;
+    }
+
+    &.tapa {
+      background-color: #e91e63;
+    }
+  }
+
+  /* Cantidad */
+  .cantidad-item {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 8px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin-bottom: 16px;
+  }
+
+  ion-input {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  /* Botón añadir al carrito */
+  ion-button {
+    margin-top: 16px;
+    --background: #00bcd4; // color aqua
+    --color: #fff; // letras blancas
+    font-weight: 600;
+    border-radius: 12px;
+    height: 48px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ion-button:hover {
+    --background: #00acc1; // aqua más oscuro al hover
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  ion-button:active {
+    --background: #0097a7; // aqua aún más oscuro al presionar
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
 }

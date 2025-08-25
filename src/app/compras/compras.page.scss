@@ -1,88 +1,105 @@
 .white-content {
-  --background: #fafdff; // blanco azulado muy suave
-}
-
-/* 🔝 Barra superior */
-.top-bar {
-  padding: 10px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 119, 182, 0.08);
-  border-radius: 0 0 16px 16px;
-}
-
-ion-searchbar {
-  --background: #ffffff;
-  --color: #005f99; 
-  --placeholder-color: #66b2e0;
-  --border-radius: 12px;
-  --box-shadow: 0 2px 8px rgba(0, 119, 182, 0.1);
-  font-size: 14px;
-  border: 1px solid #d6f0fa;
-}
-
-.ion-button-notificacion {
-  position: relative;
-  ion-icon {
-    color: #0077b6; // azul claro
-    font-size: 22px;
-  }
-  ion-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    font-size: 10px;
-    padding: 3px 6px;
-    border-radius: 50%;
-  }
-}
-
-/* 🧊 Tarjetas de producto */
-.product-card {
-  border-radius: 18px;
-  overflow: hidden;
-  margin: 12px 0;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 119, 182, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-  img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-bottom: 2px solid #e6f7ff;
-  }
-
-  ion-card-header {
-    background: #f5fbff;
+  --background: #fafdff; // fondo blanco azulado muy suave
+  ion-grid {
     padding: 12px;
-    ion-card-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #0077b6;
-    }
   }
 
-  ion-card-content {
+  .top-bar {
+    padding: 10px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 119, 182, 0.08);
+    border-radius: 0 0 16px 16px;
+    margin-bottom: 12px;
+  }
+
+  ion-searchbar {
+    --background: #ffffff;
+    --color: #005f99;
+    --placeholder-color: #66b2e0;
+    --border-radius: 12px;
+    --box-shadow: 0 2px 8px rgba(0, 119, 182, 0.1);
     font-size: 14px;
-    color: #005f99;
+    border: 1px solid #d6f0fa;
+  }
 
-    p {
-      margin: 4px 0;
+  /* Tarjetas de productos */
+  .product-card {
+    border-radius: 18px;
+    overflow: hidden;
+    margin: 12px 0;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    .image-wrapper {
+      width: 100%;
+      padding-top: 75%; // ratio 4:3
+      position: relative;
+      overflow: hidden;
+
+      img {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.05);
+      }
+    }
+
+    ion-card-header {
+      background: #f5fbff;
+      padding: 12px;
+      ion-card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #0077b6;
+      }
+    }
+
+    ion-card-content {
+      font-size: 14px;
+      color: #005f99;
+
+      .precio {
+        font-weight: bold;
+        span.oferta {
+          margin-left: 8px;
+          color: #d32f2f;
+          font-weight: 500;
+        }
+      }
+
+      p {
+        margin: 4px 0;
+      }
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 119, 182, 0.15);
+    }
+
+    &.animate {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.5s forwards;
     }
   }
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(0, 119, 182, 0.15);
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  &:active {
-    transform: scale(0.98);
+  ion-infinite-scroll-content {
+    --color: #0077b6;
+    font-weight: 500;
   }
-}
-
-/* ♾️ Infinite scroll */
-ion-infinite-scroll-content {
-  --color: #0077b6;
-  font-weight: 500;
 }
