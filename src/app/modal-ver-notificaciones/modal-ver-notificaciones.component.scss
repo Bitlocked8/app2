@@ -17,44 +17,40 @@ ion-content {
       --background: #fff;
       padding: 8px 0px;
 
-      display: flex;
-      justify-content: space-center;
-      align-items: center;
-
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-      }
-
       ion-label {
+        display: flex;
+        flex-direction: column;
+        /* apilar verticalmente */
+        align-items: center;
+        /* centrar horizontalmente */
+        justify-content: center;
         font-weight: 700;
         color: #222;
         margin: 0;
-        flex: 1;
 
-        /* NUEVO: mensaje en mayúsculas y 20px */
         .mensaje-producto {
           font-size: 30px;
           text-transform: uppercase;
-            color: #0eacc4;
+          color: #0eacc4;
+          margin-bottom: 4px;
+        }
+
+        ion-badge {
+          font-weight: 600;
+          font-size: 0.8rem;
+          padding: 6px 10px;
+          color: #fff !important;
+          background-color: #14a1d8;
+          margin-bottom: 4px;
         }
 
         .fecha {
           font-size: 0.75rem;
           color: #007081;
-          margin-top: 4px;
         }
       }
-
-      ion-badge {
-        font-weight: 600;
-        font-size: 0.8rem;
-        padding: 6px 10px;
-        color: #fff !important;
-        background-color: #14a1d8; // azul fijo para "Añadido"
-      }
     }
+
   }
 
 
