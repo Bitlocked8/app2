@@ -2,6 +2,9 @@
   --background: #f9f9f9; // fondo claro
   padding: 16px;
 
+  /* =======================
+     Imagen del producto
+  ======================= */
   .image-container {
     text-align: center;
     margin-bottom: 16px;
@@ -14,60 +17,103 @@
       object-fit: cover;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
-
-    img:hover {
-      transform: scale(1.05);
-    }
   }
 
-  .nombre-producto {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #222;
-    margin-bottom: 4px;
-  }
-
-  .capacidad {
-    color: #555;
-    font-size: 1rem;
-    margin-bottom: 12px;
-  }
-
-  /* Precios en badges, uno al lado del otro */
-  .precio-row {
+  /* =======================
+     Nombre y capacidad
+  ======================= */
+  .producto-header {
     display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+    flex-direction: column;
+    /* uno debajo del otro */
+    align-items: center;
+    text-align: center;
 
-    ion-badge {
-      flex: 1;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #fff !important;
-      padding: 10px 0;
-      text-align: center;
-      border-radius: 12px;
+    .nombre-producto {
+      font-size: 40px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #0da6b1;
+      margin: 0;
     }
 
-    ion-badge[color="secondary"] {
-      background-color: #607d8b;
+    .capacidad {
+      font-size: 0px;
+      color: #030544;
+      font-weight: normal;
+      margin-top: 4px;
     }
-
-    // gris
-    ion-badge[color="danger"] {
-      background-color: #e91e63;
-    }
-
-    // rosa/rojo
-    ion-badge[color="tertiary"] {
-      background-color: #00bcd4;
-    }
-
-    // cyan
   }
 
-  /* Spec badges (Base / Tapa) */
+  /* =======================
+     Precios en badges
+  ======================= */
+  .precio-row {
+    text-align: center;
+    margin: 12px 0;
+
+    .precio-box {
+      display: flex;
+      flex-direction: column;
+      /* 👉 título arriba, valor abajo */
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 600;
+
+      .titulo {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+        opacity: 0.9;
+      }
+
+      .valor {
+        font-size: 1.1rem;
+      }
+
+      &.oferta {
+        background: linear-gradient(90deg, #00e5ff, #00bcd4, #0097a7);
+        background-size: 300% 300%;
+        animation: aquaFlow 3s ease infinite;
+      }
+
+      &.normal {
+        background-color: #0e8792;
+   
+      }
+
+      &.referencia {
+        background-color: #0e8792;
+      }
+    }
+  }
+
+  @keyframes aquaFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+
+  /* =======================
+     Especificaciones (Base/Tapa)
+  ======================= */
   .spec-badge {
     display: inline-block;
     padding: 6px 14px;
@@ -84,11 +130,13 @@
     }
 
     &.tapa {
-      background-color: #e91e63;
+      background-color: #c9d826;
     }
   }
 
-  /* Cantidad */
+  /* =======================
+     Cantidad input
+  ======================= */
   .cantidad-item {
     --background: #fff;
     --color: #000;
@@ -96,40 +144,40 @@
     --padding-start: 8px;
     --padding-end: 8px;
     margin-bottom: 16px;
+
+    ion-input {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
   }
 
-  ion-input {
-    text-align: center;
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  /* Botón añadir al carrito */
+  /* =======================
+     Botón añadir al carrito
+  ======================= */
   ion-button {
     margin-top: 16px;
-    --background: #00bcd4; // color aqua
-    --color: #fff; // letras blancas
+    --background: #00bcd4;
+    --color: #fff;
     font-weight: 600;
     border-radius: 12px;
     height: 48px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-
     display: flex;
     justify-content: center;
     align-items: center;
-  }
 
-  ion-button:hover {
-    --background: #00acc1; // aqua más oscuro al hover
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-  }
+    &:hover {
+      --background: #00acc1;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
 
-  ion-button:active {
-    --background: #0097a7; // aqua aún más oscuro al presionar
-    transform: translateY(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    &:active {
+      --background: #0097a7;
+      transform: translateY(0);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
   }
-
 }

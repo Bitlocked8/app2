@@ -1,125 +1,83 @@
-:host {
-  display: block;
-  height: 100%;
-  background: #fff;
-  /* fondo blanco para todo el modal */
-  color: #000;
-  /* texto negro */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 ion-content {
-  --background: #fff;
-  /* fondo blanco para ion-content */
-  height: 100%;
+  --background: #f9f9f9;
   padding: 16px;
-  box-sizing: border-box;
-}
 
-ion-list {
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  background: #fff;
-  margin-bottom: 16px;
-}
-
-ion-item {
-  --background: #fff;
-  /* fondo blanco para cada item */
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  --padding-start: 0;
-  --padding-end: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  &.leida {
-    opacity: 0.6;
+  .empty-state {
+    text-align: center;
+    margin-top: 50px;
+    color: #555;
+    font-size: 1rem;
   }
 
-  ion-label {
-    flex: 1;
+  ion-list {
+    margin: 0;
+    background: #fff;
 
-    h3 {
-      margin: 0 0 4px 0;
-      font-weight: 600;
-      font-size: 1rem;
-      color: #000;
-    }
+    ion-item {
+      --background: #fff;
+      padding: 8px 0px;
 
-    p {
-      margin: 0;
-      font-size: 0.75rem;
-      color: #444;
-    }
-  }
+      display: flex;
+      justify-content: space-center;
+      align-items: center;
 
-  ion-badge {
-    font-weight: 700;
-    font-size: 0.75rem;
-    padding: 4px 12px;
-    border-radius: 12px;
-    color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &.success {
-      background-color: #28a745;
-      /* verde */
-    }
+      &:hover {
+        transform: translateY(-2px);
+      }
 
-    &.danger {
-      background-color: #dc3545;
-      /* rojo */
-    }
+      ion-label {
+        font-weight: 700;
+        color: #222;
+        margin: 0;
+        flex: 1;
 
-    &.warning {
-      background-color: #ff9800;
-      /* naranja */
-    }
+        /* NUEVO: mensaje en mayúsculas y 20px */
+        .mensaje-producto {
+          font-size: 30px;
+          text-transform: uppercase;
+            color: #0eacc4;
+        }
 
-    &.tertiary {
-      background-color: #3880ff;
-      /* azul */
-    }
+        .fecha {
+          font-size: 0.75rem;
+          color: #007081;
+          margin-top: 4px;
+        }
+      }
 
-    &.pagado {
-      background-color: #198754;
-      /* verde oscuro */
-    }
-
-    &.pendiente {
-      background-color: #dc3545;
-      /* rojo fuerte */
-    }
-
-    &.carrito {
-      background-color: #ffc107;
-      /* amarillo oscuro */
-      color: #000;
+      ion-badge {
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        color: #fff !important;
+        background-color: #14a1d8; // azul fijo para "Añadido"
+      }
     }
   }
 
 
   ion-button {
-    --padding-start: 4px;
-    --padding-end: 4px;
-    color: #333;
+    margin-top: 16px;
+    --background: #00bcd4;
+    --color: #fff;
+    font-weight: 600;
+    border-radius: 12px;
+    height: 44px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 
-    ion-icon {
-      font-size: 1.2rem;
-      color: #333;
+    &:hover {
+      --background: #00acc1;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    &:active {
+      --background: #0097a7;
+      transform: translateY(0);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
   }
-}
-
-ion-button[color="danger"] {
-  --background: #dc3545;
-  --color: #fff;
-  --border-radius: 24px;
-  margin-top: 12px;
-  font-weight: 600;
-  --padding-start: 12px;
-  --padding-end: 12px;
 }

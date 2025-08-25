@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
 import { Subscription } from 'rxjs';
-import { trashOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { trashOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-modal-ver-notificaciones',
@@ -24,17 +24,14 @@ import { trashOutline, checkmarkDoneOutline } from 'ionicons/icons';
 export class ModalVerNotificacionesComponent implements OnInit, OnDestroy {
   notificaciones: Notificacion[] = [];
   sub!: Subscription;
+  trashOutline = trashOutline;
 
-  constructor(private notiService: NotificacionesService) {}
+  constructor(private notiService: NotificacionesService) { }
 
   ngOnInit() {
     this.sub = this.notiService.getObservable().subscribe(noti => {
-      this.notificaciones = noti;
+      this.notificaciones = noti.filter(n => n.tipo === 'carrito');
     });
-  }
-
-  marcarLeida(id: number) {
-    this.notiService.marcarComoLeida(id);
   }
 
   limpiarNotificaciones() {
@@ -45,25 +42,14 @@ export class ModalVerNotificacionesComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  getTextoBadge(tipo: string): string {
-    switch(tipo) {
-      case 'carrito': return 'Añadido';
-      case 'pagado': return 'Pagado';
-      case 'success': return 'Éxito';
-      case 'error': return 'Error';
-      case 'pendiente': return 'Pendiente';
-      default: return 'Info';
-    }
+  getTextoBadge(noti: Notificacion): string {
+    return noti.cantidad ? `${noti.cantidad} unidades añadidas al carrito` : 'Añadido al carrito';
   }
 
-  getColorBadge(tipo: string): string {
-    switch(tipo) {
-      case 'carrito': return 'warning';  // naranja
-      case 'pagado': return 'success';   // verde
-      case 'success': return 'success';
-      case 'error': 
-      case 'pendiente': return 'danger'; // rojo
-      default: return 'primary';
-    }
+
+
+
+  getColorBadge(noti: Notificacion): string {
+    return 'warning'; // o usa 'cyan' si quieres
   }
 }

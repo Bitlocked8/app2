@@ -50,20 +50,26 @@ export class ModalVerCompraProductoComponent implements OnInit {
 
 
   async agregarAlCarrito() {
+    const cantidadSeleccionada = this.productoSeleccionado.cantidad;
+
     this.historialService.addCompra({
       producto: this.producto.nombre,
       imagen: this.producto.imagen,
       precio: parseFloat(this.producto.precioReferencia),
       metodoPago: this.metodoPago === 'contado' ? this.metodoPagoAhora : 'pagar después',
       fecha: new Date(),
-      cantidad: this.productoSeleccionado.cantidad,
+      cantidad: cantidadSeleccionada,
       estado: 'carrito'
     });
 
+    // PASAR CANTIDAD Y PRODUCTO ID a la notificación
     this.notiService.agregar(
-      `Producto "${this.producto.nombre}" añadido al carrito.`,
-      'carrito'
+      this.producto.nombre,  // solo el nombre del producto
+      'carrito',             // tipo de notificación
+      cantidadSeleccionada,   // cantidad añadida
+      this.producto.id        // ID del producto
     );
+
 
     const toast = await this.toastCtrl.create({
       message: 'Producto añadido al carrito.',
@@ -73,47 +79,7 @@ export class ModalVerCompraProductoComponent implements OnInit {
       icon: 'cart'
     });
     await toast.present();
-  }
-
-  async hacerPedido() {
-    const estadoFinal = this.metodoPago === 'contado' ? 'pagado' : 'pendiente';
-
-    this.historialService.addCompra({
-      producto: this.producto.nombre,
-      imagen: this.producto.imagen,
-      precio: parseFloat(this.producto.precioReferencia),
-      metodoPago: this.metodoPagoAhora,
-      fecha: new Date(),
-      cantidad: this.productoSeleccionado.cantidad,
-      estado: estadoFinal
-    });
-
-    this.notiService.agregar(
-      estadoFinal === 'pagado'
-        ? `Pago confirmado para "${this.producto.nombre}".`
-        : `Pedido realizado para "${this.producto.nombre}", pendiente de pago.`,
-      estadoFinal === 'pagado' ? 'pagado' : 'pendiente'
-    );
-
-    const toast = await this.toastCtrl.create({
-      message: estadoFinal === 'pagado'
-        ? 'Compra realizada y pagada con éxito.'
-        : 'Pedido realizado, pendiente de pago.',
-      duration: 2000,
-      color: 'success',
-      position: 'bottom',
-      icon: 'checkmark-done-outline'
-    });
-    await toast.present();
-  }
-
-  onComprobanteSubido(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.comprobanteSubido = true;
-      console.log('Comprobante subido:', file.name);
-    }
-  }
+  } 
 
   get precioTotal(): string {
     const precioUnitario = parseFloat(this.producto.precioReferencia);

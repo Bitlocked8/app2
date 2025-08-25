@@ -11,32 +11,40 @@
     <!-- Nombre y capacidad -->
     <ion-row>
       <ion-col size="12">
-        <!-- Nombre y capacidad -->
-        <h2 class="nombre-producto">{{ producto.nombre }}</h2>
-        <p class="capacidad">{{ producto.capacidad }} {{ producto.unidad }}</p>
+        <div class="producto-header">
+          <h2 class="nombre-producto">
+            {{ producto.nombre }}
+          </h2>
+          <span class="capacidad">{{ producto.capacidad }} {{ producto.unidad }}</span>
+        </div>
       </ion-col>
     </ion-row>
 
-    <!-- Precios como badges -->
+
     <ion-row class="precio-row">
-      <ion-col size="auto">
-        <ion-badge color="secondary" class="precio-badge">
-          Precio: $ {{ producto.precioReferencia }}
-        </ion-badge>
+      <ion-col size="4">
+        <div class="precio-box normal">
+          <span class="titulo">Precio</span>
+          <span class="valor">$ {{ producto.precioReferencia }}</span>
+        </div>
       </ion-col>
 
-      <ion-col size="auto" *ngIf="producto.precioReferencia2">
-        <ion-badge color="danger" class="precio-badge">
-          Oferta: $ {{ producto.precioReferencia2 }}
-        </ion-badge>
+      <ion-col size="4" *ngIf="producto.precioReferencia2">
+        <div class="precio-box oferta">
+          <span class="titulo">Oferta</span>
+          <span class="valor">$ {{ producto.precioReferencia2 }}</span>
+        </div>
       </ion-col>
 
-      <ion-col size="auto" *ngIf="producto.precioReferencia3">
-        <ion-badge color="tertiary" class="precio-badge">
-          Referencia: $ {{ producto.precioReferencia3 }}
-        </ion-badge>
+      <ion-col size="4" *ngIf="producto.precioReferencia3">
+        <div class="precio-box referencia">
+          <span class="titulo">Referencia</span>
+          <span class="valor">$ {{ producto.precioReferencia3 }}</span>
+        </div>
       </ion-col>
     </ion-row>
+
+
 
 
 
@@ -75,7 +83,7 @@
     <!-- Botón Añadir al carrito -->
     <ion-row>
       <ion-col size="12">
-        <ion-button expand="block"  (click)="agregarAlCarrito()">
+        <ion-button expand="block" (click)="agregarAlCarrito()">
           Añadir al carrito
         </ion-button>
       </ion-col>
