@@ -26,10 +26,6 @@ export class ModalVerCompraProductoComponent implements OnInit {
     cantidad: 1,
   };
 
-  metodoPago: string = 'despues';
-  metodoPagoAhora: string = '';
-  comprobanteSubido: boolean = false;
-
   constructor(
     private notiService: NotificacionesService,
     private historialService: HistorialService,
@@ -42,12 +38,11 @@ export class ModalVerCompraProductoComponent implements OnInit {
 
   // Método helper
   getImagenUrl(imagen: string | null): string {
-    if (!imagen) return `https://picsum.photos/300/300?random=${this.producto.id}`; // fallback
-    if (imagen.startsWith('http')) return imagen; // ya es URL absoluta
-    if (imagen.startsWith('storage/')) return `http://127.0.0.1:8000/${imagen}`; // path relativo
-    return `http://127.0.0.1:8000/storage/${imagen}`; // solo nombre de archivo
+    if (!imagen) return `https://picsum.photos/300/300?random=${this.producto.id}`;
+    if (imagen.startsWith('http')) return imagen;
+    if (imagen.startsWith('storage/')) return `http://127.0.0.1:8000/${imagen}`;
+    return `http://127.0.0.1:8000/storage/${imagen}`;
   }
-
 
   async agregarAlCarrito() {
     const cantidadSeleccionada = this.productoSeleccionado.cantidad;
@@ -56,20 +51,18 @@ export class ModalVerCompraProductoComponent implements OnInit {
       producto: this.producto.nombre,
       imagen: this.producto.imagen,
       precio: parseFloat(this.producto.precioReferencia),
-      metodoPago: this.metodoPago === 'contado' ? this.metodoPagoAhora : 'pagar después',
+      metodoPago: 'pagar después',
       fecha: new Date(),
       cantidad: cantidadSeleccionada,
       estado: 'carrito'
     });
 
-    // PASAR CANTIDAD Y PRODUCTO ID a la notificación
     this.notiService.agregar(
-      this.producto.nombre,  // solo el nombre del producto
-      'carrito',             // tipo de notificación
-      cantidadSeleccionada,   // cantidad añadida
-      this.producto.id        // ID del producto
+      this.producto.nombre,
+      'carrito',
+      cantidadSeleccionada,
+      this.producto.id
     );
-
 
     const toast = await this.toastCtrl.create({
       message: 'Producto añadido al carrito.',

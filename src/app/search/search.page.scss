@@ -1,149 +1,144 @@
 ion-content {
-  --background: #f8f8f8;
+  --background: #ffffff; // fondo blanco general
   font-family: 'Segoe UI', sans-serif;
-  color: #000000;
-}
+  color: #000;
 
-/* Títulos, textos, labels */
-ion-label, p, h2, ion-text {
-  color: #000000 !important;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Items (tarjetas blancas con sombra) */
-ion-item {
-  --background: #ffffff;
-  --color: #000000;
-  --border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-/* Inputs aqua con texto blanco */
-ion-input {
-  --background: #00bcd4;   /* aqua */
-  --color: #ffffff;        /* texto dentro */
-  --placeholder-color: rgba(255,255,255,0.8);
-  --padding-start: 12px;
-  border-radius: 10px;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
-/* Labels flotantes en negro cuando están arriba */
-ion-item ion-label {
-  color: #000000;
-}
-
-/* Labels en blanco cuando el input está activo */
-ion-item.ion-focused ion-label {
-  color: #ffffff !important;
-}
-
-/* Segmento de métodos de pago */
-ion-segment {
-  --background: #ffffff;
-  border-radius: 12px;
-  margin: 10px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-ion-segment-button {
-  --color: #000000;
-  --color-checked: #ffffff;
-  --background-checked: #00bcd4; /* aqua activo */
-  font-weight: 500;
-}
-
-/* Botón de pagar */
-ion-button {
-  --background: #000000;
-  --color: #ffffff;
-  border-radius: 20px;
-  font-weight: 500;
-  margin-top: 12px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-
-/* Caja de detalle (cuando eliges un método de pago) */
-.pago-detalle {
-  background: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-top: 12px;
-}
-
-/* Timeline (pasos de compra) */
-.timeline-vertical {
-  margin: 16px 0;
-}
-
-.timeline-step {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.timeline-step input[type="radio"] {
-  accent-color: #00bcd4;
-}
-.timeline-vertical {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  margin: 16px 0;
-
-  .timeline-step {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    position: relative;
-
-    .circle {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background-color: #ccc;
-      margin-right: 12px;
-      margin-top: 4px;
-      flex-shrink: 0;
-
-      &.done {
-        background-color: #00bcd4; // aqua
-      }
-    }
-
-    .timeline-content {
-      h4 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #000; // negro visible
-      }
-
-      p {
-        margin: 2px 0;
-        font-size: 14px;
-        color: #333; // gris oscuro
-      }
-
-      small {
-        font-size: 12px;
-        color: #666;
-      }
-    }
+  .empty-state {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 1rem;
+    color: #888;
   }
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 7px;
-    width: 2px;
-    height: 100%;
-    background-color: #ccc;
-    z-index: 0;
+  .compras-list {
+    --background: #ffffff; // fondo blanco de la lista
+    background-color: #ffffff !important; // respaldo
+
+    ion-item.compra-item {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      --background: #ffffff !important; // fondo blanco de cada item
+      background-color: #ffffff !important; // respaldo
+      padding: 16px;
+      justify-content: center;
+
+      ion-label.full-width {
+        width: 100%;
+        text-align: center;
+
+        h2 {
+          font-size: 30px; // tamaño
+          font-weight: bold; // negrilla
+          text-transform: uppercase; // mayúsculas
+          margin: 0 0 6px 0;
+          color: #11eed0; // cyan
+        }
+
+        p {
+          margin: 4px 0;
+          font-size: 0.9rem;
+          color: #000; // negro
+        }
+
+        .notificaciones {
+          margin-top: 8px;
+
+          p {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #000;
+          }
+
+          ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+
+            li {
+              font-size: 0.85rem;
+              color: #00bcd4; // cyan
+              margin-bottom: 2px;
+            }
+          }
+        }
+
+        .timeline-zigzag {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin: 20px 0;
+
+          .timeline-step {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+
+            &.left {
+              flex-direction: row;
+              justify-content: flex-start;
+
+              .label {
+                margin-left: 12px;
+                text-align: left;
+              }
+            }
+
+            &.right {
+              flex-direction: row-reverse;
+              justify-content: flex-end;
+
+              .label {
+                margin-right: 12px;
+                text-align: right;
+              }
+            }
+
+            .circle {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              background: #ccc;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              color: #fff;
+              font-size: 0.9rem;
+              z-index: 1;
+            }
+
+            &.done .circle {
+              background: #00bcd4; // cyan
+            }
+
+            .label {
+              font-size: 0.9rem;
+              color: #000;
+              font-weight: bold;
+              white-space: nowrap;
+            }
+
+            .line-vertical {
+              position: absolute;
+              top: 32px; // debajo del círculo
+              left: 50%;
+              transform: translateX(-50%);
+              width: 4px;
+              height: 40px;
+              background: #ccc;
+
+              /* si el paso anterior está hecho, se pone cyan */
+              .done & {
+                background: #00bcd4;
+              }
+            }
+          }
+        }
+
+
+
+      }
+    }
   }
 }
