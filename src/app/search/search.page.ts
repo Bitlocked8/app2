@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar,
   IonGrid, IonRow, IonCol, IonButton, IonList, IonText, IonButtons,
-  IonModal, IonIcon
+  IonModal, IonIcon, IonCheckbox
 } from '@ionic/angular/standalone';
 import { HistorialService, Compra } from '../services/historial.service';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
@@ -34,7 +34,8 @@ import { closeOutline } from 'ionicons/icons';
     IonList,
     IonText,
     IonModal,
-    IonIcon
+    IonIcon,
+    IonCheckbox
   ]
 })
 export class SearchPage implements OnInit, OnDestroy {
@@ -43,13 +44,13 @@ export class SearchPage implements OnInit, OnDestroy {
   private comprasSub!: Subscription;
   private notiSub!: Subscription;
 
-  selectedCompra: Compra | null = null; // importante inicializar en null
-
+  selectedCompra: Compra | null = null; 
+  pagoModalOpen = false;
 
   constructor(
     private historialService: HistorialService,
     private notiService: NotificacionesService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.comprasSub = this.historialService.compras$.subscribe(c => this.compras = c);
@@ -61,9 +62,19 @@ export class SearchPage implements OnInit, OnDestroy {
     this.notiSub?.unsubscribe();
   }
 
+  totalCompra(compra: Compra): number {
+    return compra.precio * compra.cantidad;
+  }
+
+  totalSeleccionado(): number {
+    return this.compras
+      .filter(c => c.seleccionado)
+      .reduce((sum, c) => sum + this.totalCompra(c), 0);
+  }
+
   getTimeline(compra: Compra) {
     return [
-      { label: 'Falta pagar', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) ? true : false },
+      { label: 'Falta pagar', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) },
       { label: 'Pago realizado', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) },
       { label: 'Empaquetado', done: ['enviado', 'recibido'].includes(compra.estado) },
       { label: 'Enviado', done: ['enviado', 'recibido'].includes(compra.estado) },
@@ -75,27 +86,22 @@ export class SearchPage implements OnInit, OnDestroy {
     return this.notificaciones.filter(n => n.mensaje.includes(compra.producto));
   }
 
-  totalCompra(compra: Compra) {
-    return (compra.precio * compra.cantidad).toFixed(2);
-  }
-
-  openModal(compra: Compra) {
-    this.selectedCompra = compra;
-  }
-
-  closeModal() {
-    this.selectedCompra = null;
-  }
-
-  // ✅ Función setOpen para compatibilidad con el modal inline
   setOpen(isOpen: boolean, compra?: Compra) {
-    if (isOpen && compra) {
-      this.selectedCompra = compra;
-    } else {
-      this.selectedCompra = null;
-    }
+    this.selectedCompra = isOpen && compra ? compra : null;
   }
 
+  openPagoModal() {
+    this.compras.forEach(c => c.seleccionado = true);
+    this.pagoModalOpen = true;
+  }
 
-
+  pagar(metodo: 'qr' | 'tarjeta') {
+    const seleccionados = this.compras.filter(c => c.seleccionado);
+    if (seleccionados.length === 0) {
+      alert('Selecciona al menos un producto para pagar');
+      return;
+    }
+    console.log('Pagando con', metodo, seleccionados);
+    this.pagoModalOpen = false;
+  }
 }

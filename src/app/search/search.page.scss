@@ -2,8 +2,20 @@
 ion-content {
   --background: #ffffff;
   font-family: 'Segoe UI', sans-serif;
-
   --padding-bottom: 80px;
+
+  .btn-general {
+    display: block;
+    margin: 16px auto;
+    --background: #11eed0;
+    --color: #ffffff;
+    --border-color: #11eed0;
+    --border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    --min-height: 44px;
+    width: 90%;
+  }
 
   .empty-state {
     text-align: center;
@@ -38,7 +50,6 @@ ion-content {
       }
 
       ion-button {
-
         text-transform: uppercase;
         --padding-start: 12px;
         --padding-end: 12px;
@@ -53,24 +64,30 @@ ion-content {
 
 ion-modal {
   --background: transparent;
-  /* fondo general transparente */
+
+  .btn-modal-pago {
+    display: block;
+    margin: 16px auto;
+    --background: #11eed0;
+    --color: #ffffff;
+    --border-color: #0fb7a0;
+    --border-radius: 8px;
+    // --box-shadow: none; 
+    font-weight: bold;
+    text-transform: uppercase;
+    --min-height: 44px;
+    width: 90%;
+  }
 
   .modal-container {
     position: relative;
     background: #ffffff;
-    /* fondo blanco */
     border-radius: 16px 16px 0 0;
-    /* redondeado solo arriba */
     width: 100%;
     height: 90vh;
-    /* ocupa casi toda la pantalla */
     margin: auto 0 0 0;
-    /* se pega arriba */
     padding: 24px 16px 80px 16px;
-    /* padding para contenido + tab */
     overflow-y: auto;
-    /* scroll si hay mucho contenido */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     text-align: center;
   }
 
@@ -95,6 +112,46 @@ ion-modal {
     color: #000;
     font-size: 0.95rem;
     margin-bottom: 8px;
+  }
+
+  .modal-pago-list {
+    background-color: #ffffff;
+
+    .modal-pago-item {
+      --background: #ffffff;
+      --border-style: none;
+
+      ion-label {
+        font-weight: bold;
+        color: #0cbba4;
+        text-transform: uppercase;
+        text-align: left;
+      }
+
+      ion-checkbox {
+        --background: #ffffff;
+        --border-color: #11eed0;
+        --checkmark-color: #ffffff;
+        --border-radius: 50%;
+        --size: 24px;
+        --icon-size: 14px;
+        --border-style: solid;
+
+        .checkbox-inner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--background);
+          border-radius: 50%;
+          transition: all 0.2s ease-in-out;
+        }
+
+        &.checkbox-checked .checkbox-inner {
+          background: #11eed0;
+          border-color: #11eed0;
+        }
+      }
+    }
   }
 
   .notificaciones {

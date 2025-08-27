@@ -1,31 +1,56 @@
 <ion-content class="ion-padding">
 
-  <!-- Mensaje si no hay productos -->
   <div *ngIf="compras.length === 0" class="empty-state">
     No hay productos añadidos al carrito.
   </div>
 
+  <ion-button class="btn-general" (click)="openPagoModal()" *ngIf="compras.length > 0">
+    Pagar productos
+  </ion-button>
 
-  <!-- Lista de productos -->
+  <ion-modal [isOpen]="pagoModalOpen">
+    <ng-template>
+      <div class="modal-container">
+        <ion-button class="close-btn" fill="clear" (click)="pagoModalOpen = false">✕</ion-button>
+
+        <div class="modal-content">
+          <h2>Productos en carrito</h2>
+
+          <ion-list class="modal-pago-list">
+            <ion-item class="modal-pago-item" *ngFor="let compra of compras">
+              <ion-checkbox slot="start" [(ngModel)]="compra.seleccionado"></ion-checkbox>
+              <ion-label>
+                {{ compra.producto }} - {{ totalCompra(compra) | number:'1.2-2' }} Bs.
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div class="total-global">
+            <p>Total seleccionado: {{ totalSeleccionado() | number:'1.2-2' }} Bs.</p>
+          </div>
+
+          <ion-button class="btn-modal-pago" expand="full" (click)="pagar('qr')">Pagar con QR</ion-button>
+          <ion-button class="btn-modal-pago" expand="full" (click)="pagar('tarjeta')">Pagar con tarjeta</ion-button>
+
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
   <ion-list *ngIf="compras.length > 0" class="compras-list">
-    <ion-item *ngFor="let compra of compras" class="compra-item">
-
+    <ion-item *ngFor="let compra of compras" class="compra-item column-item">
       <ion-label class="full-width">
         <h2>{{ compra.producto }}</h2>
         <p>Total: {{ totalCompra(compra) }} Bs.</p>
       </ion-label>
 
-      <!-- Botón para abrir modal de detalles -->
-      <ion-button slot="end" class="btn-detalle" (click)="setOpen(true, compra)">
+      <ion-button class="btn-general" (click)="setOpen(true, compra)">
         Ver detalles
       </ion-button>
-
-
-
     </ion-item>
   </ion-list>
 
-  <!-- Modal de detalles -->
+
   <ion-modal [isOpen]="selectedCompra !== null">
     <ng-template>
       <div class="modal-container">
@@ -58,6 +83,5 @@
       </div>
     </ng-template>
   </ion-modal>
-
 
 </ion-content>
