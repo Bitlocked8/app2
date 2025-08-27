@@ -1,39 +1,63 @@
 <ion-content class="ion-padding">
 
+  <!-- Mensaje si no hay productos -->
   <div *ngIf="compras.length === 0" class="empty-state">
     No hay productos añadidos al carrito.
   </div>
 
+
+  <!-- Lista de productos -->
   <ion-list *ngIf="compras.length > 0" class="compras-list">
     <ion-item *ngFor="let compra of compras" class="compra-item">
 
-      <ion-label class="full-width text-center">
+      <ion-label class="full-width">
         <h2>{{ compra.producto }}</h2>
-        <p>Cantidad: {{ compra.cantidad }}</p>
         <p>Total: {{ totalCompra(compra) }} Bs.</p>
-        <p>Estado: {{ compra.estado }}</p>
-
-        <div *ngIf="getNotificaciones(compra).length > 0" class="notificaciones">
-          <p>Notificaciones:</p>
-          <!-- <ul>
-            <li *ngFor="let n of getNotificaciones(compra)">{{ n.mensaje }}</li>
-          </ul> -->
-        </div>
-
-        <div class="timeline-zigzag">
-          <div *ngFor="let t of getTimeline(compra); let i = index" class="timeline-step" [class.done]="t.done"
-            [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
-
-            <div class="circle">{{ t.done ? '✔' : '' }}</div>
-            <div class="label">{{ t.label }}</div>
-            <!-- Línea vertical que conecta -->
-            <div class="line-vertical" *ngIf="i < getTimeline(compra).length - 1"></div>
-          </div>
-        </div>
-
       </ion-label>
+
+      <!-- Botón para abrir modal de detalles -->
+      <ion-button slot="end" class="btn-detalle" (click)="setOpen(true, compra)">
+        Ver detalles
+      </ion-button>
+
+
 
     </ion-item>
   </ion-list>
+
+  <!-- Modal de detalles -->
+  <ion-modal [isOpen]="selectedCompra !== null">
+    <ng-template>
+      <div class="modal-container">
+        <ion-button class="close-btn" fill="clear" (click)="setOpen(false)">✕</ion-button>
+
+        <div class="modal-content" *ngIf="selectedCompra">
+          <h2>{{ selectedCompra.producto }}</h2>
+          <p>Cantidad: {{ selectedCompra.cantidad }}</p>
+          <p>Total: {{ totalCompra(selectedCompra) }} Bs.</p>
+          <p>Estado: {{ selectedCompra.estado }}</p>
+
+          <div *ngIf="getNotificaciones(selectedCompra).length > 0" class="notificaciones">
+            <p>Notificaciones:</p>
+            <ul>
+              <li *ngFor="let n of getNotificaciones(selectedCompra)">
+                {{ n.mensaje }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="timeline-zigzag">
+            <div *ngFor="let t of getTimeline(selectedCompra); let i = index" class="timeline-step"
+              [class.done]="t.done" [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
+              <div class="circle">{{ t.done ? '✔' : '' }}</div>
+              <div class="label">{{ t.label }}</div>
+              <div class="line-vertical" *ngIf="i < getTimeline(selectedCompra).length - 1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
 
 </ion-content>

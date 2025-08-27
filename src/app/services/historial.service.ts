@@ -9,6 +9,7 @@ export interface Compra {
   fecha: Date;
   cantidad: number;
   estado: 'carrito' | 'pendiente' | 'pagado' | 'enviado' | 'recibido';
+  
 }
 
 @Injectable({

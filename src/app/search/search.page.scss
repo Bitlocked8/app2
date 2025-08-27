@@ -1,143 +1,181 @@
+/* Contenido general */
 ion-content {
-  --background: #ffffff; // fondo blanco general
+  --background: #ffffff;
   font-family: 'Segoe UI', sans-serif;
-  color: #000;
+
+  --padding-bottom: 80px;
 
   .empty-state {
     text-align: center;
     margin-top: 50px;
     font-size: 1rem;
-    color: #888;
+    color: #04443b;
   }
 
   .compras-list {
-    --background: #ffffff; // fondo blanco de la lista
-    background-color: #ffffff !important; // respaldo
+    --background: #ffffff;
+    background-color: #ffffff !important;
 
     ion-item.compra-item {
-      margin-bottom: 16px;
+      margin-bottom: 24px;
       border-radius: 12px;
-      --background: #ffffff !important; // fondo blanco de cada item
-      background-color: #ffffff !important; // respaldo
+      --background: #ffffff !important;
+      background-color: #ffffff !important;
       padding: 16px;
-      justify-content: center;
+      justify-content: space-between;
+      --border-color: #11eed0;
 
       ion-label.full-width {
-        width: 100%;
-        text-align: center;
+        width: 70%;
 
         h2 {
-          font-size: 30px; // tamaño
-          font-weight: bold; // negrilla
-          text-transform: uppercase; // mayúsculas
+          font-size: 20px;
+          font-weight: bold;
+          text-transform: uppercase;
           margin: 0 0 6px 0;
-          color: #11eed0; // cyan
+          color: #11eed0;
         }
+      }
 
-        p {
-          margin: 4px 0;
-          font-size: 0.9rem;
-          color: #000; // negro
-        }
+      ion-button {
 
-        .notificaciones {
-          margin-top: 8px;
+        text-transform: uppercase;
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --min-height: 36px;
+        --background: #11eed0;
+        --color: #ffffff;
+        --border-color: #11eed0;
+      }
+    }
+  }
+}
 
-          p {
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #000;
-          }
+ion-modal {
+  --background: transparent;
+  /* fondo general transparente */
 
-          ul {
-            margin: 0;
-            padding-left: 0;
-            list-style: none;
+  .modal-container {
+    position: relative;
+    background: #ffffff;
+    /* fondo blanco */
+    border-radius: 16px 16px 0 0;
+    /* redondeado solo arriba */
+    width: 100%;
+    height: 90vh;
+    /* ocupa casi toda la pantalla */
+    margin: auto 0 0 0;
+    /* se pega arriba */
+    padding: 24px 16px 80px 16px;
+    /* padding para contenido + tab */
+    overflow-y: auto;
+    /* scroll si hay mucho contenido */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
 
-            li {
-              font-size: 0.85rem;
-              color: #00bcd4; // cyan
-              margin-bottom: 2px;
-            }
-          }
-        }
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 1.5rem;
+    color: #00bcd4;
+    --background: transparent;
+  }
 
-        .timeline-zigzag {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin: 20px 0;
+  .modal-content h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: #11eed0;
+  }
 
-          .timeline-step {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 40px;
+  .modal-content p {
+    color: #000;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
 
-            &.left {
-              flex-direction: row;
-              justify-content: flex-start;
+  .notificaciones {
+    margin-top: 16px;
 
-              .label {
-                margin-left: 12px;
-                text-align: left;
-              }
-            }
+    p {
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 4px;
+    }
 
-            &.right {
-              flex-direction: row-reverse;
-              justify-content: flex-end;
+    ul {
+      padding-left: 0;
+      list-style: none;
 
-              .label {
-                margin-right: 12px;
-                text-align: right;
-              }
-            }
+      li {
+        color: #00bcd4;
+        margin-bottom: 4px;
+      }
+    }
+  }
 
-            .circle {
-              width: 32px;
-              height: 32px;
-              border-radius: 50%;
-              background: #ccc;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              color: #fff;
-              font-size: 0.9rem;
-              z-index: 1;
-            }
+  .timeline-zigzag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
 
-            &.done .circle {
-              background: #00bcd4; // cyan
-            }
+    .timeline-step {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 32px;
 
-            .label {
-              font-size: 0.9rem;
-              color: #000;
-              font-weight: bold;
-              white-space: nowrap;
-            }
+      &.left {
+        flex-direction: row;
+        justify-content: flex-start;
+      }
 
-            .line-vertical {
-              position: absolute;
-              top: 32px; // debajo del círculo
-              left: 50%;
-              transform: translateX(-50%);
-              width: 4px;
-              height: 40px;
-              background: #ccc;
+      &.right {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
 
-              /* si el paso anterior está hecho, se pone cyan */
-              .done & {
-                background: #00bcd4;
-              }
-            }
-          }
-        }
+      .circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 0.9rem;
+        z-index: 1;
+      }
 
+      &.done .circle {
+        background: #00bcd4;
+      }
 
+      .label {
+        font-size: 0.9rem;
+        color: #000;
+        font-weight: bold;
+        margin: 0 8px;
+        white-space: nowrap;
+      }
 
+      .line-vertical {
+        position: absolute;
+        top: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 40px;
+        background: #ccc;
+      }
+
+      &.done .line-vertical {
+        background: #00bcd4;
       }
     }
   }

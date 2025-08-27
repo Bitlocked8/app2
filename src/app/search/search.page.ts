@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar,
-  IonGrid, IonRow, IonCol, IonButton, IonList, IonText,IonButtons ,
+  IonGrid, IonRow, IonCol, IonButton, IonList, IonText, IonButtons,
   IonModal, IonIcon
 } from '@ionic/angular/standalone';
 import { HistorialService, Compra } from '../services/historial.service';
@@ -29,7 +29,7 @@ import { closeOutline } from 'ionicons/icons';
     IonGrid,
     IonRow,
     IonCol,
-    IonButtons ,
+    IonButtons,
     IonButton,
     IonList,
     IonText,
@@ -43,12 +43,13 @@ export class SearchPage implements OnInit, OnDestroy {
   private comprasSub!: Subscription;
   private notiSub!: Subscription;
 
-  selectedCompra!: Compra | null;
+  selectedCompra: Compra | null = null; // importante inicializar en null
+
 
   constructor(
     private historialService: HistorialService,
     private notiService: NotificacionesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.comprasSub = this.historialService.compras$.subscribe(c => this.compras = c);
@@ -62,10 +63,10 @@ export class SearchPage implements OnInit, OnDestroy {
 
   getTimeline(compra: Compra) {
     return [
-      { label: 'Falta pagar', done: ['pagado','enviado','recibido'].includes(compra.estado) ? true : false },
-      { label: 'Pago realizado', done: ['pagado','enviado','recibido'].includes(compra.estado) },
-      { label: 'Empaquetado', done: ['enviado','recibido'].includes(compra.estado) },
-      { label: 'Enviado', done: ['enviado','recibido'].includes(compra.estado) },
+      { label: 'Falta pagar', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) ? true : false },
+      { label: 'Pago realizado', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) },
+      { label: 'Empaquetado', done: ['enviado', 'recibido'].includes(compra.estado) },
+      { label: 'Enviado', done: ['enviado', 'recibido'].includes(compra.estado) },
       { label: 'Recibido', done: compra.estado === 'recibido' }
     ];
   }
@@ -85,4 +86,16 @@ export class SearchPage implements OnInit, OnDestroy {
   closeModal() {
     this.selectedCompra = null;
   }
+
+  // ✅ Función setOpen para compatibilidad con el modal inline
+  setOpen(isOpen: boolean, compra?: Compra) {
+    if (isOpen && compra) {
+      this.selectedCompra = compra;
+    } else {
+      this.selectedCompra = null;
+    }
+  }
+
+
+
 }
