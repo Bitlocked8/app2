@@ -1,105 +1,320 @@
 .white-content {
-  --background: #fafdff; // fondo blanco azulado muy suave
-  ion-grid {
-    padding: 12px;
+  --background: #ffffff;
+  --color: #333333;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center; /* Centra verticalmente */
+  gap: 12px; /* Espacio entre searchbar y botón */
+  padding: 0 16px;
+  margin-bottom: 16px;
+  flex-wrap: nowrap; /* Evita que se rompa la línea */
+}
+
+.custom-searchbar {
+  flex: 1; /* Ocupa todo el espacio disponible */
+  min-width: 0; /* Importante para que el flex funcione en móviles */
+  --background: #f8f9fa;
+  --border-radius: 12px;
+  --box-shadow: none;
+  --color: #333333;
+  --icon-color: #00bcd4;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Evita que el botón se reduzca */
+}
+
+.actions ion-button {
+  width: auto;
+  min-width: auto;
+}
+
+
+.notifications-btn {
+  --color: #00bcd4;
+  position: relative;
+
+  .notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 10px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #00bcd4;
+  }
+}
+
+/* Tarjetas de productos */
+.product-card {
+  --background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
+  margin: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 188, 212, 0.25);
   }
 
-  .top-bar {
-    padding: 10px;
-    background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 119, 182, 0.08);
-    border-radius: 0 0 16px 16px;
-    margin-bottom: 12px;
-  }
-
-  ion-searchbar {
-    --background: #ffffff;
-    --color: #005f99;
-    --placeholder-color: #66b2e0;
-    --border-radius: 12px;
-    --box-shadow: 0 2px 8px rgba(0, 119, 182, 0.1);
-    font-size: 14px;
-    border: 1px solid #d6f0fa;
-  }
-
-  /* Tarjetas de productos */
-  .product-card {
-    border-radius: 18px;
+  .image-wrapper {
+    width: 100%;
+    height: 180px;
     overflow: hidden;
-    margin: 12px 0;
-    background: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
 
-    .image-wrapper {
+    img {
       width: 100%;
-      padding-top: 75%; // ratio 4:3
-      position: relative;
-      overflow: hidden;
-
-      img {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-      }
-
-      &:hover img {
-        transform: scale(1.05);
-      }
+      height: 100%;
+      object-fit: cover;
     }
+  }
 
-    ion-card-header {
-      background: #f5fbff;
-      padding: 12px;
-      ion-card-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: #0077b6;
-      }
+  ion-card-header {
+    padding: 16px 16px 8px;
+
+    ion-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #006064;
     }
+  }
 
-    ion-card-content {
-      font-size: 14px;
-      color: #005f99;
+  ion-card-content {
+    padding: 8px 16px 16px;
 
-      .precio {
+    p {
+      margin: 4px 0;
+      color: #546e7a;
+      font-size: 0.9rem;
+
+      &.precio {
         font-weight: bold;
-        span.oferta {
+        color: #00bcd4 !important;
+        font-size: 1.1rem !important;
+
+        .oferta {
+          text-decoration: line-through;
+          color: #b0bec5 !important;
+          font-size: 0.9rem !important;
           margin-left: 8px;
-          color: #d32f2f;
-          font-weight: 500;
         }
       }
 
-      p {
-        margin: 4px 0;
+      &.observaciones {
+        font-style: italic;
+        color: #78909c !important;
       }
     }
+  }
 
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(0, 119, 182, 0.15);
+  &.animate {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal unificado para productos y notificaciones */
+.custom-modal {
+  --background: transparent;
+
+  .modal-container {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-height: 80vh;
+    margin: auto 0 0 0;
+    padding: 24px 16px 40px;
+    overflow-y: auto;
+    text-align: center;
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 1.5rem;
+      color: #00bcd4;
+      --background: transparent;
+      z-index: 10;
+      margin: 0;
+      --padding-start: 8px;
+      --padding-end: 8px;
     }
 
-    &.animate {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.5s forwards;
+    .modal-content {
+      h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        color: #00bcd4;
+      }
+
+      .producto-info {
+        text-align: center;
+        margin-bottom: 20px;
+
+        p {
+          margin: 8px 0;
+          color: #546e7a;
+
+          &.precio {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00bcd4 !important;
+          }
+        }
+      }
+
+      ion-item.custom-item {
+        --background: transparent;
+        --border-color: #e0f7fa;
+        margin-bottom: 16px;
+
+        ion-label {
+          color: #006064;
+          font-weight: 500;
+          margin-bottom: 8px;
+        }
+      }
+
+      .cantidad-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 12px 0;
+
+        .qty-btn {
+          --color: #00bcd4;
+          --padding-start: 8px;
+          --padding-end: 8px;
+        }
+
+        .cantidad-input {
+          text-align: center;
+          margin: 0 15px;
+          width: 60px;
+          border: 2px solid #00bcd4;
+          border-radius: 8px;
+          padding: 8px;
+          font-weight: bold;
+          color: #006064;
+        }
+      }
+
+      .add-button {
+        --background: #00bcd4;
+        --background-activated: #0097a7;
+        --background-hover: #00acc1;
+        --color: #ffffff;
+        --border-radius: 12px;
+        --padding-top: 20px;
+        --padding-bottom: 20px;
+        font-weight: bold;
+        margin-top: 20px;
+        text-transform: uppercase;
+      }
+
+      /* Notificaciones */
+      .notifications-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+
+        span {
+          color: #006064;
+          font-weight: 500;
+        }
+
+        ion-button {
+          --color: #ffffff;
+          --background: #00bcd4;
+          --background-hover: #00acc1;
+          --border-radius: 12px;
+          font-weight: bold;
+          text-transform: uppercase;
+
+          &[fill="clear"] {
+            --color: #00bcd4;
+            --background: transparent;
+          }
+        }
+      }
+
+    .notifications-list {
+  --background: #ffffff; /* fondo blanco del ion-list */
+  padding: 0;
+
+  ion-item.notification-item {
+    --background: #ffffff; /* fondo de cada item */
+    color: #006064;
+
+    &.unread {
+      font-weight: bold;
+    }
+
+    ion-label {
+      color: #006064;
+    }
+
+    .notification-badge {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #00bcd4;
     }
   }
 
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  .empty-state {
+    background-color: #ffffff; /* fondo blanco */
+    color: #78909c;
+    font-style: italic;
+    padding: 12px 0;
+  }
+}
+
     }
   }
+}
 
-  ion-infinite-scroll-content {
-    --color: #0077b6;
-    font-weight: 500;
+/* Responsive */
+@media (max-width: 768px) {
+  .product-card {
+    margin: 8px 0;
   }
+
+  .modal-container {
+    padding: 20px 12px 36px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Estados de carga */
+ion-infinite-scroll-content {
+  --color: #00bcd4;
 }

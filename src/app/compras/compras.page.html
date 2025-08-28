@@ -1,17 +1,26 @@
 <ion-content class="white-content">
   <!-- Barra superior / Buscador + Notificaciones -->
-  <div class="top-bar" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-    <ion-searchbar [(ngModel)]="busqueda" (ionInput)="filtrarProductos()" placeholder="Buscar productos..." style="flex:1; margin-right:8px;"></ion-searchbar>
-    <ion-button fill="clear" (click)="verNotificaciones()" style="position:relative;">
-      <ion-icon name="notifications-outline"></ion-icon>
-      <ion-badge *ngIf="notificacionesNoLeidas > 0" color="danger" style="position:absolute; top:-4px; right:-4px;">{{ notificacionesNoLeidas }}</ion-badge>
-    </ion-button>
+  <div class="top-bar">
+    <ion-searchbar [(ngModel)]="busqueda" (ionInput)="filtrarProductos()" placeholder="Buscar productos..."
+      class="custom-searchbar">
+    </ion-searchbar>
+    <div class="actions">
+
+      <ion-button fill="clear" class="notifications-btn" (click)="abrirModalNotificaciones()">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <ion-badge *ngIf="notificacionesNoLeidas > 0" color="danger" class="notification-badge">
+          {{ notificacionesNoLeidas }}
+        </ion-badge>
+      </ion-button>
+    </div>
   </div>
+
+
 
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-md="6" size-lg="4" *ngFor="let p of productosFiltrados; let i = index">
-        <ion-card class="product-card animate" [style.animationDelay]="i * 100 + 'ms'" (click)="verProducto(p)">
+        <ion-card class="product-card animate" [style.animationDelay]="i * 100 + 'ms'" (click)="abrirModalProducto(p)">
           <div class="image-wrapper">
             <img [src]="p.imagen" alt="{{ p.nombre }}" />
           </div>
@@ -24,12 +33,99 @@
               ${{ p.precioReferencia }}
               <span *ngIf="p.precioReferencia2" class="oferta">${{ p.precioReferencia2 }}</span>
             </p>
-            <p *ngIf="p.observaciones">{{ p.observaciones }}</p>
+            <p *ngIf="p.observaciones" class="observaciones">{{ p.observaciones }}</p>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <!-- Modal para añadir al carrito -->
+  <ion-modal [isOpen]="modalProductoAbierto" (didDismiss)="cerrarModalProducto()" class="custom-modal">
+    <ng-template>
+      <div class="modal-container">
+        <ion-button (click)="cerrarModalProducto()" fill="clear" class="close-btn">✕</ion-button>
+
+        <div class="modal-content" *ngIf="productoSeleccionado">
+          <h2>{{ productoSeleccionado.nombre }}</h2>
+
+          <div class="producto-info">
+            <p>Capacidad: {{ productoSeleccionado.capacidad }} {{ productoSeleccionado.unidad }}</p>
+            <p class="precio">Precio: ${{ productoSeleccionado.precioReferencia }}</p>
+            <p *ngIf="productoSeleccionado.observaciones" class="observaciones">{{ productoSeleccionado.observaciones }}
+            </p>
+          </div>
+
+          <ion-item class="custom-item">
+            <ion-label position="stacked">Cantidad</ion-label>
+            <div class="cantidad-controls">
+              <ion-button fill="clear" (click)="decrementarCantidad()" class="qty-btn">
+                <ion-icon name="remove-outline"></ion-icon>
+              </ion-button>
+              <ion-input type="number" [(ngModel)]="cantidad" min="1" class="cantidad-input"></ion-input>
+              <ion-button fill="clear" (click)="incrementarCantidad()" class="qty-btn">
+                <ion-icon name="add-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-item>
+
+          <ion-item class="custom-item">
+            <ion-label position="stacked">Observaciones (opcional)</ion-label>
+            <ion-input type="text" [(ngModel)]="observaciones" placeholder="Especificaciones especiales"></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" (click)="agregarAlCarrito()" class="add-button">
+            Añadir al carrito - ${{ calcularPrecioTotal() | number:'1.2-2' }}
+          </ion-button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+<ion-modal [isOpen]="modalNotificacionesAbierto" (didDismiss)="cerrarModalNotificaciones()" class="custom-modal">
+  <ng-template>
+    <div class="modal-container">
+      <ion-button (click)="cerrarModalNotificaciones()" fill="clear" class="close-btn">✕</ion-button>
+
+      <div class="modal-content">
+        <h2>Notificaciones</h2>
+
+        <!-- Resumen del carrito dentro del modal -->
+        <div class="carrito-summary" [class.show]="mostrarCarrito">
+          <p>Carrito: {{ carrito.length }} producto(s) - Total: ${{ getTotalCarrito() | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="notifications-header">
+          <span>{{ notificaciones.length }} notificaciones</span>
+          <ion-button fill="clear" size="small" (click)="limpiarNotificaciones()" *ngIf="notificaciones.length > 0">
+            Limpiar todo
+          </ion-button>
+        </div>
+
+        <ion-list class="notifications-list">
+          <div *ngIf="notificaciones.length === 0" class="empty-state">
+            No hay notificaciones
+          </div>
+
+          <ion-item *ngFor="let noti of notificaciones" class="notification-item" [class.unread]="!noti.leida"
+            (click)="marcarComoLeida(noti)">
+
+            <ion-label>
+              <h3>{{ noti.mensaje }}</h3>
+              <p *ngIf="noti.cantidad && noti.cantidad > 1">
+                Cantidad: {{ noti.cantidad }} unidades
+              </p>
+              <p>{{ noti.fecha | date:'short' }}</p>
+            </ion-label>
+
+            <div class="notification-badge" *ngIf="!noti.leida"></div>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más productos...">

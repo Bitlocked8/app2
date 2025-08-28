@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { notificationsOutline } from 'ionicons/icons';
+import { notificationsOutline, addOutline, removeOutline, closeOutline, cartOutline } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 
 import {
@@ -20,15 +20,36 @@ import {
   IonInfiniteScroll,
   IonSearchbar,
   IonInfiniteScrollContent,
-  ModalController
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonInput,
+  IonText,
+  IonItem,
+  IonLabel,
+  IonList
 } from '@ionic/angular/standalone';
 
-import { ModalVerCompraProductoComponent } from '../modal-ver-compra-producto/modal-ver-compra-producto.component';
-import { ModalVerNotificacionesComponent } from '../modal-ver-notificaciones/modal-ver-notificaciones.component';
-import { NotificacionesService } from '../services/notificaciones.service';
+import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
 import { ProductosService, Producto } from '../services/productos.service';
 
-addIcons({ 'notifications-outline': notificationsOutline });
+addIcons({ 
+  'notifications-outline': notificationsOutline,
+  'add-outline': addOutline,
+  'remove-outline': removeOutline,
+  'close-outline': closeOutline,
+  'cart-outline': cartOutline
+});
+
+interface ItemCarrito {
+  producto: Producto;
+  cantidad: number;
+  observaciones: string;
+  precioTotal: number;
+  fecha: Date;
+}
 
 @Component({
   selector: 'app-compras',
@@ -52,6 +73,16 @@ addIcons({ 'notifications-outline': notificationsOutline });
     IonCardContent,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonInput,
+    IonText,
+    IonItem,
+    IonLabel,
+    IonList
   ],
 })
 export class ComprasPage implements OnInit, OnDestroy {
@@ -59,11 +90,23 @@ export class ComprasPage implements OnInit, OnDestroy {
   productosFiltrados: Producto[] = [];
   busqueda = '';
   notificacionesNoLeidas = 0;
+  
+  // Modales
+  modalProductoAbierto = false;
+  modalNotificacionesAbierto = false;
+  
+  // Carrito y selección
+  productoSeleccionado: Producto | null = null;
+  cantidad: number = 1;
+  observaciones: string = '';
+  carrito: ItemCarrito[] = [];
+  mostrarCarrito: boolean = false;
+  // Notificaciones
+  notificaciones: Notificacion[] = [];
 
   private notiSub!: Subscription;
 
   constructor(
-    private modalCtrl: ModalController,
     private notiService: NotificacionesService,
     private productosService: ProductosService
   ) { }
@@ -71,6 +114,7 @@ export class ComprasPage implements OnInit, OnDestroy {
   ngOnInit() {
     // Suscribirse a notificaciones
     this.notiSub = this.notiService.getObservable().subscribe(notiList => {
+      this.notificaciones = notiList;
       this.notificacionesNoLeidas = notiList.filter(n => !n.leida).length;
     });
 
@@ -100,29 +144,101 @@ export class ComprasPage implements OnInit, OnDestroy {
     );
   }
 
-  async verProducto(producto: Producto) {
-    const modal = await this.modalCtrl.create({
-      component: ModalVerCompraProductoComponent,
-      componentProps: { producto },
-      breakpoints: [0, 0.7, 1],
-      initialBreakpoint: 0.7,
-      showBackdrop: true
-    });
-    await modal.present();
+  // Modal de producto
+  abrirModalProducto(producto: Producto) {
+    this.productoSeleccionado = producto;
+    this.cantidad = 1;
+    this.observaciones = '';
+    this.modalProductoAbierto = true;
   }
 
-  async verNotificaciones() {
-    const modal = await this.modalCtrl.create({
-      component: ModalVerNotificacionesComponent,
-      breakpoints: [0, 0.5, 1],
-      initialBreakpoint: 0.5,
-      showBackdrop: true
-    });
-    await modal.present();
+  cerrarModalProducto() {
+    this.modalProductoAbierto = false;
+    this.productoSeleccionado = null;
   }
+
+  // Modal de notificaciones
+  abrirModalNotificaciones() {
+    this.modalNotificacionesAbierto = true;
+  }
+
+  cerrarModalNotificaciones() {
+    this.modalNotificacionesAbierto = false;
+  }
+
+  // Control de cantidad
+  incrementarCantidad() {
+    this.cantidad++;
+  }
+
+  decrementarCantidad() {
+    if (this.cantidad > 1) {
+      this.cantidad--;
+    }
+  }
+
+  // Función para convertir precio de string a número
+  obtenerPrecioNumerico(precio: string): number {
+    return parseFloat(precio) || 0;
+  }
+
+  // Calcular el precio total
+  calcularPrecioTotal(): number {
+    if (!this.productoSeleccionado) return 0;
+    return this.obtenerPrecioNumerico(this.productoSeleccionado.precioReferencia) * this.cantidad;
+  }
+
+  // Agregar al carrito
+  agregarAlCarrito() {
+    if (this.productoSeleccionado) {
+      const item: ItemCarrito = {
+        producto: this.productoSeleccionado,
+        cantidad: this.cantidad,
+        observaciones: this.observaciones,
+        precioTotal: this.calcularPrecioTotal(),
+        fecha: new Date()
+      };
+
+      this.carrito.push(item);
+      
+      // Agregar notificación
+      this.notiService.agregar(
+        this.productoSeleccionado.nombre,
+        'carrito',
+        this.cantidad,
+        this.productoSeleccionado.id
+      );
+
+      // Cerrar el modal después de añadir
+      this.cerrarModalProducto();
+    }
+  }
+
+  // Marcar notificación como leída
+  marcarComoLeida(notificacion: Notificacion) {
+    this.notiService.marcarComoLeida(notificacion.id);
+  }
+
+  // Limpiar notificaciones
+  limpiarNotificaciones() {
+    this.notiService.limpiar();
+  }
+
+  // Obtener total del carrito
+  getTotalCarrito(): number {
+    return this.carrito.reduce((total, item) => total + item.precioTotal, 0);
+  }
+  // Método para mostrar el resumen del carrito por 3 segundos
+mostrarResumenCarrito() {
+  this.mostrarCarrito = true;
+
+  setTimeout(() => {
+    this.mostrarCarrito = false;
+  }, 3000); // desaparece después de 3 segundos
+}
+
 
   loadData(event: any) {
-    // Solo completar scroll infinito
     event.target.complete();
   }
 }
