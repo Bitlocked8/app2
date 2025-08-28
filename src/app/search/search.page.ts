@@ -1,15 +1,23 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonAvatar,
-  IonGrid, IonRow, IonCol, IonButton, IonList, IonText, IonButtons,
-  IonModal, IonIcon, IonCheckbox
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonText,
+  IonButton
 } from '@ionic/angular/standalone';
-import { HistorialService, Compra } from '../services/historial.service';
+
+import { CarritoService, ItemCarrito } from '../services/carrito.service';
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
-import { Subscription } from 'rxjs';
-import { closeOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-search',
@@ -20,88 +28,45 @@ import { closeOutline } from 'ionicons/icons';
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
     IonItem,
     IonLabel,
-    IonAvatar,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonButtons,
-    IonButton,
     IonList,
     IonText,
-    IonModal,
-    IonIcon,
-    IonCheckbox
-  ]
+    IonButton, // <-- Aquí agregas IonButton
+  ],
 })
 export class SearchPage implements OnInit, OnDestroy {
-  compras: Compra[] = [];
+  carrito: ItemCarrito[] = [];
   notificaciones: Notificacion[] = [];
-  private comprasSub!: Subscription;
+
+  private carritoSub!: Subscription;
   private notiSub!: Subscription;
 
-  selectedCompra: Compra | null = null; 
-  pagoModalOpen = false;
-
   constructor(
-    private historialService: HistorialService,
+    private carritoService: CarritoService,
     private notiService: NotificacionesService
   ) {}
 
   ngOnInit() {
-    this.comprasSub = this.historialService.compras$.subscribe(c => this.compras = c);
-    this.notiSub = this.notiService.getObservable().subscribe(noti => this.notificaciones = noti);
+    this.carritoSub = this.carritoService.carrito$.subscribe(items => {
+      this.carrito = items;
+    });
+
+    this.notiSub = this.notiService.getObservable().subscribe(noti => {
+      this.notificaciones = noti;
+    });
   }
 
   ngOnDestroy() {
-    this.comprasSub?.unsubscribe();
+    this.carritoSub?.unsubscribe();
     this.notiSub?.unsubscribe();
   }
 
-  totalCompra(compra: Compra): number {
-    return compra.precio * compra.cantidad;
-  }
-
-  totalSeleccionado(): number {
-    return this.compras
-      .filter(c => c.seleccionado)
-      .reduce((sum, c) => sum + this.totalCompra(c), 0);
-  }
-
-  getTimeline(compra: Compra) {
-    return [
-      { label: 'Falta pagar', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) },
-      { label: 'Pago realizado', done: ['pagado', 'enviado', 'recibido'].includes(compra.estado) },
-      { label: 'Empaquetado', done: ['enviado', 'recibido'].includes(compra.estado) },
-      { label: 'Enviado', done: ['enviado', 'recibido'].includes(compra.estado) },
-      { label: 'Recibido', done: compra.estado === 'recibido' }
-    ];
-  }
-
-  getNotificaciones(compra: Compra) {
-    return this.notificaciones.filter(n => n.mensaje.includes(compra.producto));
-  }
-
-  setOpen(isOpen: boolean, compra?: Compra) {
-    this.selectedCompra = isOpen && compra ? compra : null;
-  }
-
-  openPagoModal() {
-    this.compras.forEach(c => c.seleccionado = true);
-    this.pagoModalOpen = true;
-  }
-
-  pagar(metodo: 'qr' | 'tarjeta') {
-    const seleccionados = this.compras.filter(c => c.seleccionado);
-    if (seleccionados.length === 0) {
-      alert('Selecciona al menos un producto para pagar');
-      return;
-    }
-    console.log('Pagando con', metodo, seleccionados);
-    this.pagoModalOpen = false;
+  getTotalCarrito(): number {
+    return this.carritoService.total();
   }
 }

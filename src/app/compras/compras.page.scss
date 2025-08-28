@@ -5,16 +5,21 @@
 
 .top-bar {
   display: flex;
-  align-items: center; /* Centra verticalmente */
-  gap: 12px; /* Espacio entre searchbar y botón */
+  align-items: center;
+  /* Centra verticalmente */
+  gap: 12px;
+  /* Espacio entre searchbar y botón */
   padding: 0 16px;
   margin-bottom: 16px;
-  flex-wrap: nowrap; /* Evita que se rompa la línea */
+  flex-wrap: nowrap;
+  /* Evita que se rompa la línea */
 }
 
 .custom-searchbar {
-  flex: 1; /* Ocupa todo el espacio disponible */
-  min-width: 0; /* Importante para que el flex funcione en móviles */
+  flex: 1;
+  /* Ocupa todo el espacio disponible */
+  min-width: 0;
+  /* Importante para que el flex funcione en móviles */
   --background: #f8f9fa;
   --border-radius: 12px;
   --box-shadow: none;
@@ -25,7 +30,8 @@
 .actions {
   display: flex;
   align-items: center;
-  flex-shrink: 0; /* Evita que el botón se reduzca */
+  flex-shrink: 0;
+  /* Evita que el botón se reduzca */
 }
 
 .actions ion-button {
@@ -50,7 +56,6 @@
   }
 }
 
-/* Tarjetas de productos */
 .product-card {
   --background: #ffffff;
   border-radius: 16px;
@@ -82,9 +87,11 @@
     padding: 16px 16px 8px;
 
     ion-card-title {
-      font-size: 1.1rem;
+      font-size: 30px;
       font-weight: 600;
-      color: #006064;
+      color: #10b4b1;
+      text-transform: uppercase;
+      text-align: center;
     }
   }
 
@@ -98,7 +105,7 @@
 
       &.precio {
         font-weight: bold;
-        color: #00bcd4 !important;
+        color: #10b4b1 !important;
         font-size: 1.1rem !important;
 
         .oferta {
@@ -154,7 +161,7 @@
       top: 12px;
       right: 12px;
       font-size: 1.5rem;
-      color: #00bcd4;
+      color: #10b4b1;
       --background: transparent;
       z-index: 10;
       margin: 0;
@@ -168,7 +175,15 @@
         font-weight: bold;
         text-transform: uppercase;
         margin-bottom: 20px;
-        color: #00bcd4;
+        color: #10b4b1;
+      }
+
+      .carrito-summary p {
+        color: #12abb1;
+        /* texto oscuro y visible */
+        font-weight: 500;
+        font-size: 1rem;
+        margin: 0 0 12px;
       }
 
       .producto-info {
@@ -182,7 +197,7 @@
           &.precio {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #00bcd4 !important;
+            color: #10b4b1 !important;
           }
         }
       }
@@ -206,7 +221,7 @@
         margin: 12px 0;
 
         .qty-btn {
-          --color: #00bcd4;
+          --color: #10b4b1;
           --padding-start: 8px;
           --padding-end: 8px;
         }
@@ -215,7 +230,7 @@
           text-align: center;
           margin: 0 15px;
           width: 60px;
-          border: 2px solid #00bcd4;
+          border: 2px solid #10b4b1;
           border-radius: 8px;
           padding: 8px;
           font-weight: bold;
@@ -224,7 +239,7 @@
       }
 
       .add-button {
-        --background: #00bcd4;
+        --background: #10b4b1;
         --background-activated: #0097a7;
         --background-hover: #00acc1;
         --color: #ffffff;
@@ -250,50 +265,53 @@
 
         ion-button {
           --color: #ffffff;
-          --background: #00bcd4;
+          --background: #10b4b1;
           --background-hover: #00acc1;
           --border-radius: 12px;
           font-weight: bold;
           text-transform: uppercase;
 
           &[fill="clear"] {
-            --color: #00bcd4;
+            --color: #10b4b1;
             --background: transparent;
           }
         }
       }
 
-    .notifications-list {
-  --background: #ffffff; /* fondo blanco del ion-list */
-  padding: 0;
+      .notifications-list {
+        --background: #ffffff;
+        /* fondo blanco del ion-list */
+        padding: 0;
 
-  ion-item.notification-item {
-    --background: #ffffff; /* fondo de cada item */
-    color: #006064;
+        ion-item.notification-item {
+          --background: #ffffff;
+          /* fondo de cada item */
+          color: #006064;
 
-    &.unread {
-      font-weight: bold;
-    }
+          &.unread {
+            font-weight: bold;
+          }
 
-    ion-label {
-      color: #006064;
-    }
+          ion-label {
+            color: #006064;
+          }
 
-    .notification-badge {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #00bcd4;
-    }
-  }
+          .notification-badge {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #10b4b1;
+          }
+        }
 
-  .empty-state {
-    background-color: #ffffff; /* fondo blanco */
-    color: #78909c;
-    font-style: italic;
-    padding: 12px 0;
-  }
-}
+        .empty-state {
+          background-color: #ffffff;
+          /* fondo blanco */
+          color: #78909c;
+          font-style: italic;
+          padding: 12px 0;
+        }
+      }
 
     }
   }
@@ -316,5 +334,5 @@
 
 /* Estados de carga */
 ion-infinite-scroll-content {
-  --color: #00bcd4;
+  --color: #10b4b1;
 }

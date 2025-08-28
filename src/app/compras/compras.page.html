@@ -82,49 +82,50 @@
     </ng-template>
   </ion-modal>
 
-<ion-modal [isOpen]="modalNotificacionesAbierto" (didDismiss)="cerrarModalNotificaciones()" class="custom-modal">
-  <ng-template>
-    <div class="modal-container">
-      <ion-button (click)="cerrarModalNotificaciones()" fill="clear" class="close-btn">✕</ion-button>
+  <ion-modal [isOpen]="modalNotificacionesAbierto" (didDismiss)="cerrarModalNotificaciones()" class="custom-modal">
+    <ng-template>
+      <div class="modal-container">
+        <ion-button (click)="cerrarModalNotificaciones()" fill="clear" class="close-btn">✕</ion-button>
 
-      <div class="modal-content">
-        <h2>Notificaciones</h2>
+        <div class="modal-content">
+          <h2>Notificaciones</h2>
 
-        <!-- Resumen del carrito dentro del modal -->
-        <div class="carrito-summary" [class.show]="mostrarCarrito">
-          <p>Carrito: {{ carrito.length }} producto(s) - Total: ${{ getTotalCarrito() | number:'1.2-2' }}</p>
-        </div>
-
-        <div class="notifications-header">
-          <span>{{ notificaciones.length }} notificaciones</span>
-          <ion-button fill="clear" size="small" (click)="limpiarNotificaciones()" *ngIf="notificaciones.length > 0">
-            Limpiar todo
-          </ion-button>
-        </div>
-
-        <ion-list class="notifications-list">
-          <div *ngIf="notificaciones.length === 0" class="empty-state">
-            No hay notificaciones
+          <!-- Resumen del carrito -->
+          <div class="carrito-summary" *ngIf="carrito.length > 0">
+            <p>Carrito: {{ carrito.length }} producto(s) - Total: ${{ getTotalCarrito() | number:'1.2-2' }}</p>
           </div>
 
-          <ion-item *ngFor="let noti of notificaciones" class="notification-item" [class.unread]="!noti.leida"
-            (click)="marcarComoLeida(noti)">
+          <div class="notifications-header">
+            <span>{{ notificaciones.length }} notificaciones</span>
+            <ion-button fill="clear" size="small" (click)="limpiarNotificaciones()" *ngIf="notificaciones.length > 0">
+              Limpiar todo
+            </ion-button> 
+          </div>
 
-            <ion-label>
-              <h3>{{ noti.mensaje }}</h3>
-              <p *ngIf="noti.cantidad && noti.cantidad > 1">
-                Cantidad: {{ noti.cantidad }} unidades
-              </p>
-              <p>{{ noti.fecha | date:'short' }}</p>
-            </ion-label>
+          <ion-list class="notifications-list">
+            <div *ngIf="notificaciones.length === 0" class="empty-state">
+              No hay notificaciones
+            </div>
 
-            <div class="notification-badge" *ngIf="!noti.leida"></div>
-          </ion-item>
-        </ion-list>
+            <ion-item *ngFor="let noti of notificaciones" class="notification-item" [class.unread]="!noti.leida"
+              (click)="marcarComoLeida(noti)">
+
+              <ion-label>
+                <h3>{{ noti.mensaje }}</h3>
+                <p *ngIf="noti.cantidad && noti.cantidad > 1">
+                  Cantidad: {{ noti.cantidad }} unidades
+                </p>
+                <p>{{ noti.fecha | date:'short' }}</p>
+              </ion-label>
+
+              <div class="notification-badge" *ngIf="!noti.leida"></div>
+            </ion-item>
+          </ion-list>
+        </div>
       </div>
-    </div>
-  </ng-template>
-</ion-modal>
+    </ng-template>
+  </ion-modal>
+
 
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">

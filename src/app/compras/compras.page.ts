@@ -34,22 +34,15 @@ import {
 
 import { NotificacionesService, Notificacion } from '../services/notificaciones.service';
 import { ProductosService, Producto } from '../services/productos.service';
+import { CarritoService, ItemCarrito } from '../services/carrito.service';
 
-addIcons({ 
+addIcons({
   'notifications-outline': notificationsOutline,
   'add-outline': addOutline,
   'remove-outline': removeOutline,
   'close-outline': closeOutline,
   'cart-outline': cartOutline
 });
-
-interface ItemCarrito {
-  producto: Producto;
-  cantidad: number;
-  observaciones: string;
-  precioTotal: number;
-  fecha: Date;
-}
 
 @Component({
   selector: 'app-compras',
@@ -90,35 +83,27 @@ export class ComprasPage implements OnInit, OnDestroy {
   productosFiltrados: Producto[] = [];
   busqueda = '';
   notificacionesNoLeidas = 0;
-  
-  // Modales
   modalProductoAbierto = false;
   modalNotificacionesAbierto = false;
-  
-  // Carrito y selección
   productoSeleccionado: Producto | null = null;
   cantidad: number = 1;
   observaciones: string = '';
-  carrito: ItemCarrito[] = [];
-  mostrarCarrito: boolean = false;
-  // Notificaciones
   notificaciones: Notificacion[] = [];
 
   private notiSub!: Subscription;
-
+  mostrarCarrito: boolean = true;
   constructor(
     private notiService: NotificacionesService,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private carritoService: CarritoService
   ) { }
 
   ngOnInit() {
-    // Suscribirse a notificaciones
     this.notiSub = this.notiService.getObservable().subscribe(notiList => {
       this.notificaciones = notiList;
       this.notificacionesNoLeidas = notiList.filter(n => !n.leida).length;
     });
 
-    // Obtener productos desde la API
     this.productosService.getProductos().subscribe({
       next: (data) => {
         this.productos = data.map(p => ({
@@ -143,6 +128,17 @@ export class ComprasPage implements OnInit, OnDestroy {
       p.nombre.toLowerCase().includes(query)
     );
   }
+  limpiarNotificaciones() {
+    this.notiService.limpiar(); // Llama al servicio de notificaciones
+    this.notificacionesNoLeidas = 0; // Actualiza contador
+  }
+  marcarComoLeida(notificacion: Notificacion) {
+    this.notiService.marcarComoLeida(notificacion.id);
+
+    // Actualiza el contador de notificaciones no leídas
+    this.notificacionesNoLeidas = this.notificaciones.filter(n => !n.leida).length;
+  }
+
 
   // Modal de producto
   abrirModalProducto(producto: Producto) {
@@ -181,7 +177,9 @@ export class ComprasPage implements OnInit, OnDestroy {
   obtenerPrecioNumerico(precio: string): number {
     return parseFloat(precio) || 0;
   }
-
+  get carrito(): ItemCarrito[] {
+    return this.carritoService.obtener();
+  }
   // Calcular el precio total
   calcularPrecioTotal(): number {
     if (!this.productoSeleccionado) return 0;
@@ -199,8 +197,8 @@ export class ComprasPage implements OnInit, OnDestroy {
         fecha: new Date()
       };
 
-      this.carrito.push(item);
-      
+      this.carritoService.agregar(item);
+
       // Agregar notificación
       this.notiService.agregar(
         this.productoSeleccionado.nombre,
@@ -214,29 +212,16 @@ export class ComprasPage implements OnInit, OnDestroy {
     }
   }
 
-  // Marcar notificación como leída
-  marcarComoLeida(notificacion: Notificacion) {
-    this.notiService.marcarComoLeida(notificacion.id);
-  }
-
-  // Limpiar notificaciones
-  limpiarNotificaciones() {
-    this.notiService.limpiar();
-  }
-
   // Obtener total del carrito
   getTotalCarrito(): number {
-    return this.carrito.reduce((total, item) => total + item.precioTotal, 0);
+    return this.carritoService.total();
   }
-  // Método para mostrar el resumen del carrito por 3 segundos
-mostrarResumenCarrito() {
-  this.mostrarCarrito = true;
-
-  setTimeout(() => {
-    this.mostrarCarrito = false;
-  }, 3000); // desaparece después de 3 segundos
-}
-
+  mostrarResumenCarrito() {
+    this.mostrarCarrito = true;
+    setTimeout(() => {
+      this.mostrarCarrito = false;
+    }, 3000); // desaparece después de 3 segundos
+  }
 
   loadData(event: any) {
     event.target.complete();

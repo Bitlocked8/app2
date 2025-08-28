@@ -1,87 +1,29 @@
-<ion-content class="ion-padding">
+<ion-content class="white-content">
 
-  <div *ngIf="compras.length === 0" class="empty-state">
-    No hay productos añadidos al carrito.
+  <!-- Mostrar carrito vacío -->
+  <div class="empty-state" *ngIf="carrito.length === 0">
+    <p>No has añadido productos al carrito 😢</p>
+    <ion-text color="medium">Explora productos y añade lo que más te guste.</ion-text>
   </div>
 
-  <ion-button class="btn-general" (click)="openPagoModal()" *ngIf="compras.length > 0">
-    Pagar productos
-  </ion-button>
-
-  <ion-modal [isOpen]="pagoModalOpen">
-    <ng-template>
-      <div class="modal-container">
-        <ion-button class="close-btn" fill="clear" (click)="pagoModalOpen = false">✕</ion-button>
-
-        <div class="modal-content">
-          <h2>Productos en carrito</h2>
-
-          <ion-list class="modal-pago-list">
-            <ion-item class="modal-pago-item" *ngFor="let compra of compras">
-              <ion-checkbox slot="start" [(ngModel)]="compra.seleccionado"></ion-checkbox>
-              <ion-label>
-                {{ compra.producto }} - {{ totalCompra(compra) | number:'1.2-2' }} Bs.
-              </ion-label>
-            </ion-item>
-          </ion-list>
-
-          <div class="total-global">
-            <p>Total seleccionado: {{ totalSeleccionado() | number:'1.2-2' }} Bs.</p>
-          </div>
-
-          <ion-button class="btn-modal-pago" expand="full" (click)="pagar('qr')">Pagar con QR</ion-button>
-          <ion-button class="btn-modal-pago" expand="full" (click)="pagar('tarjeta')">Pagar con tarjeta</ion-button>
-
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-
-  <ion-list *ngIf="compras.length > 0" class="compras-list">
-    <ion-item *ngFor="let compra of compras" class="compra-item column-item">
-      <ion-label class="full-width">
-        <h2>{{ compra.producto }}</h2>
-        <p>Total: {{ totalCompra(compra) }} Bs.</p>
-      </ion-label>
-
-      <ion-button class="btn-general" (click)="setOpen(true, compra)">
-        Ver detalles
-      </ion-button>
-    </ion-item>
-  </ion-list>
+  <!-- Lista de productos en carrito -->
+ <ion-list class="custom-carrito-list" *ngIf="carrito.length > 0">
+  <ion-item *ngFor="let item of carrito" class="carrito-item">
+    <ion-card class="cart-card">
+      <ion-card-header>
+        <ion-card-title>{{ item.producto.nombre }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Cantidad: {{ item.cantidad }}</p>
+        <p *ngIf="item.observaciones">Observaciones: {{ item.observaciones }}</p>
+        <p>Precio: ${{ item.precioTotal | number:'1.2-2' }}</p>
+      </ion-card-content>
+    </ion-card>
+  </ion-item>
+</ion-list>
 
 
-  <ion-modal [isOpen]="selectedCompra !== null">
-    <ng-template>
-      <div class="modal-container">
-        <ion-button class="close-btn" fill="clear" (click)="setOpen(false)">✕</ion-button>
 
-        <div class="modal-content" *ngIf="selectedCompra">
-          <h2>{{ selectedCompra.producto }}</h2>
-          <p>Cantidad: {{ selectedCompra.cantidad }}</p>
-          <p>Total: {{ totalCompra(selectedCompra) }} Bs.</p>
-          <p>Estado: {{ selectedCompra.estado }}</p>
 
-          <div *ngIf="getNotificaciones(selectedCompra).length > 0" class="notificaciones">
-            <p>Notificaciones:</p>
-            <ul>
-              <li *ngFor="let n of getNotificaciones(selectedCompra)">
-                {{ n.mensaje }}
-              </li>
-            </ul>
-          </div>
-
-          <div class="timeline-zigzag">
-            <div *ngFor="let t of getTimeline(selectedCompra); let i = index" class="timeline-step"
-              [class.done]="t.done" [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
-              <div class="circle">{{ t.done ? '✔' : '' }}</div>
-              <div class="label">{{ t.label }}</div>
-              <div class="line-vertical" *ngIf="i < getTimeline(selectedCompra).length - 1"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
 
 </ion-content>
