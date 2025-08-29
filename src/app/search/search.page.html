@@ -5,13 +5,9 @@
     <p>No has añadido productos al carrito 😢</p>
     <ion-text color="medium">Explora productos y añade lo que más te guste.</ion-text>
   </div>
- <ion-button 
-  *ngIf="carrito.length > 0" 
-
-   class="add-button"
-  (click)="abrirModalSeleccion()">
-  Ver Productos Seleccionables
-</ion-button>
+  <ion-button *ngIf="carrito.length > 0" class="add-button" (click)="abrirModalSeleccion()">
+    Ver Productos Seleccionables
+  </ion-button>
   <!-- Lista de productos en carrito -->
   <ion-list class="custom-carrito-list" *ngIf="carrito.length > 0">
     <ion-item *ngFor="let item of carrito; let i = index" class="carrito-item">
@@ -96,6 +92,14 @@
             </div>
           </ion-list>
         </div>
+        <ion-button  class="add-button"  (click)="procesarSeleccionados('parcial')">
+          Pagar Parcial (Fake)
+        </ion-button>
+
+        <ion-button  class="add-button" (click)="procesarSeleccionados('total')">
+          Pagar Total (Fake)
+        </ion-button>
+
 
         <!-- Si no hay productos -->
         <div class="modal-content" *ngIf="productosSeleccionados.length === 0">

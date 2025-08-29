@@ -37,4 +37,11 @@ export class CarritoService {
   total(): number {
     return this.carrito.reduce((sum, i) => sum + i.precioTotal, 0);
   }
+  actualizarEstado(idProducto: number, nuevoEstado: ItemCarrito['estado']) {
+  const index = this.carrito.findIndex(i => i.producto.id === idProducto);
+  if (index !== -1) {
+    this.carrito[index].estado = nuevoEstado;
+    this.carritoSubject.next([...this.carrito]);
+  }
+}
 }
