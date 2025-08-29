@@ -48,10 +48,6 @@ export class SearchPage implements OnInit, OnDestroy {
   modalEnvioAbierto = false;
   productoSeleccionado: ItemCarrito | null = null;
 
-  // Modal de Pago
-  modalPagoAbierto = false;
-  productosSeleccionadosPago: (ItemCarrito & { seleccionado?: boolean; estado?: string })[] = [];
-
   private carritoSub!: Subscription;
   private notiSub!: Subscription;
 
@@ -62,11 +58,11 @@ export class SearchPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.carritoSub = this.carritoService.carrito$.subscribe(items => {
-      this.carrito = items;
+      this.carrito = items || [];
     });
 
     this.notiSub = this.notiService.getObservable().subscribe(noti => {
-      this.notificaciones = noti;
+      this.notificaciones = noti || [];
     });
   }
 
@@ -89,43 +85,4 @@ export class SearchPage implements OnInit, OnDestroy {
     this.modalEnvioAbierto = false;
     this.productoSeleccionado = null;
   }
-
-  // Modal Pago
-  abrirModalPago(productos: ItemCarrito[]) {
-    this.productosSeleccionadosPago = productos.map(p => ({ ...p, seleccionado: false }));
-    this.modalPagoAbierto = true;
-  }
-
-  cerrarModalPago() {
-    this.modalPagoAbierto = false;
-    this.productosSeleccionadosPago = [];
-  }
-
-procesarPago(tipo: 'parcial' | 'total') {
-  const seleccionados = this.productosSeleccionadosPago.filter(p => p.seleccionado);
-
-  seleccionados.forEach(p => {
-    p.estado = tipo === 'parcial' ? 'Pago parcial' : 'Pago total';
-
-    // Nombre seguro del producto
-    const nombreProducto: string = p.producto.nombre ?? 'Producto sin nombre';
-
-    // Id seguro del producto
-    const idProducto: number | undefined = p.producto.id ?? undefined;
-
-    // Notificación
-    this.notiService.agregar(
-      nombreProducto,
-      tipo === 'parcial' ? 'pago parcial' : 'pago total',
-      p.cantidad,
-      idProducto
-    );
-  });
-
-  this.cerrarModalPago();
-}
-abrirModalPagoWrapper() {
-  this.abrirModalPago(this.carrito);
-}
-
 }

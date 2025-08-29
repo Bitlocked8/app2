@@ -6,17 +6,12 @@
     <ion-text color="medium">Explora productos y añade lo que más te guste.</ion-text>
   </div>
 
-  <!-- Botón de procesar pagos solo si hay productos -->
-  <ion-button *ngIf="carrito.length > 0" expand="full" color="primary" (click)="abrirModalPagoWrapper()">
-    Procesar Pagos
-  </ion-button>
-
   <!-- Lista de productos en carrito -->
   <ion-list class="custom-carrito-list" *ngIf="carrito.length > 0">
-    <ion-item *ngFor="let item of carrito" class="carrito-item">
+    <ion-item *ngFor="let item of carrito; let i = index" class="carrito-item">
       <ion-card class="cart-card" (click)="abrirModalEnvio(item)">
         <ion-card-header>
-          <ion-card-title>{{ item.producto.nombre ?? 'Producto sin nombre' }}</ion-card-title>
+          <ion-card-title>{{ i + 1 }}. {{ item.producto.nombre ?? 'Producto sin nombre' }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p>Cantidad: {{ item.cantidad }}</p>
@@ -64,33 +59,6 @@
               <div class="circle"></div>
               <div class="label">Recibido</div>
             </div>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-
-  <!-- Modal de Pago -->
-  <ion-modal [isOpen]="modalPagoAbierto" (didDismiss)="cerrarModalPago()" class="custom-modal">
-    <ng-template>
-      <div class="modal-container">
-        <ion-button (click)="cerrarModalPago()" fill="clear" class="close-btn">✕</ion-button>
-
-        <div class="modal-content" *ngIf="productosSeleccionadosPago.length > 0">
-          <h2>Procesar Pago</h2>
-
-          <ion-list>
-            <ion-item *ngFor="let item of productosSeleccionadosPago">
-              <ion-label>
-                {{ item.producto.nombre ?? 'Producto sin nombre' }} - Cantidad: {{ item.cantidad }} - Total: ${{ item.precioTotal | number:'1.2-2' }}
-              </ion-label>
-              <ion-checkbox slot="start" [(ngModel)]="item.seleccionado"></ion-checkbox>
-            </ion-item>
-          </ion-list>
-
-          <div class="tipo-pago">
-            <ion-button (click)="procesarPago('parcial')" expand="block">Pago Parcial</ion-button>
-            <ion-button (click)="procesarPago('total')" expand="block">Pago Total</ion-button>
           </div>
         </div>
       </div>
