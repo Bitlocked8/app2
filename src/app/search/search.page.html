@@ -70,11 +70,9 @@
   <ion-modal [isOpen]="modalSeleccionAbierto" (didDismiss)="cerrarModalSeleccion()" class="custom-modal">
     <ng-template>
       <div class="modal-container">
-        <!-- Botón de cerrar -->
         <ion-button fill="clear" class="close-btn" (click)="cerrarModalSeleccion()">✕</ion-button>
 
-        <!-- Contenido del modal -->
-        <div class="modal-content" *ngIf="productosSeleccionados.length > 0">
+        <div class="modal-content" *ngIf="productosSeleccionados.length > 0 && !comprobanteVisible">
           <h2>Selecciona Productos</h2>
 
           <ion-list class="custom-carrito-list">
@@ -85,21 +83,33 @@
                 <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
                 <p class="total">Total: ${{ item.precioTotal | number:'1.2-2' }}</p>
               </div>
-
             </ion-item>
+
             <div class="producto-cantidad-total total-seleccion">
               <p>Total seleccionado: ${{ getTotalSeleccion() | number:'1.2-2' }}</p>
             </div>
           </ion-list>
+
+          <!-- Botones de pago fake -->
+          <div class="acciones-pago">
+            <ion-button expand="full" color="warning" (click)="mostrarComprobante('parcial')">
+              Pagar Parcial (Fake)
+            </ion-button>
+
+            <ion-button expand="full" color="success" (click)="mostrarComprobante('total')">
+              Pagar Total (Fake)
+            </ion-button>
+          </div>
         </div>
-        <ion-button  class="add-button"  (click)="procesarSeleccionados('parcial')">
-          Pagar Parcial (Fake)
-        </ion-button>
 
-        <ion-button  class="add-button" (click)="procesarSeleccionados('total')">
-          Pagar Total (Fake)
-        </ion-button>
-
+        <!-- Subida de comprobante -->
+        <div *ngIf="comprobanteVisible" class="comprobante-container">
+          <h3>Subir comprobante para {{ tipoPagoComprobante === 'parcial' ? 'Pago Parcial' : 'Pago Total' }}</h3>
+          <input type="file" (change)="archivoSeleccionado($event)" />
+          <ion-button expand="full" color="primary" (click)="confirmarComprobante()">
+            Confirmar Comprobante
+          </ion-button>
+        </div>
 
         <!-- Si no hay productos -->
         <div class="modal-content" *ngIf="productosSeleccionados.length === 0">

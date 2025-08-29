@@ -45,22 +45,17 @@ import { NotificacionesService, Notificacion } from '../services/notificaciones.
 export class SearchPage implements OnInit, OnDestroy {
   carrito: ItemCarrito[] = [];
   notificaciones: Notificacion[] = [];
-
-  // Modal de Envío
   modalEnvioAbierto = false;
   productoSeleccionado: ItemCarrito | null = null;
-
-  // Modal de Selección de productos
   modalSeleccionAbierto = false;
   productosSeleccionados: (ItemCarrito & { seleccionado: boolean })[] = [];
-
   private carritoSub!: Subscription;
   private notiSub!: Subscription;
 
   constructor(
     private carritoService: CarritoService,
     private notiService: NotificacionesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carritoSub = this.carritoService.carrito$.subscribe(items => {
@@ -81,7 +76,7 @@ export class SearchPage implements OnInit, OnDestroy {
     return this.carritoService.total();
   }
 
-  // Modal Envío
+
   abrirModalEnvio(item: ItemCarrito) {
     this.productoSeleccionado = item;
     this.modalEnvioAbierto = true;
@@ -92,7 +87,6 @@ export class SearchPage implements OnInit, OnDestroy {
     this.productoSeleccionado = null;
   }
 
-  // Modal Selección de todos los productos
   abrirModalSeleccion() {
     this.productosSeleccionados = this.carrito.map(p => ({
       ...p,
@@ -102,13 +96,37 @@ export class SearchPage implements OnInit, OnDestroy {
     this.modalSeleccionAbierto = true;
   }
 
-  cerrarModalSeleccion() {
-    this.modalSeleccionAbierto = false;
-    this.productosSeleccionados = [];
-  }
+
 
   toggleSeleccion(item: ItemCarrito & { seleccionado: boolean }) {
     item.seleccionado = !item.seleccionado;
+  }
+  procesarSeleccionados(tipoPago: 'parcial' | 'total') {
+    const nuevoEstado = tipoPago === 'parcial' ? 'Pago parcial' : 'Pago total';
+
+    const seleccionados = this.productosSeleccionados.filter(p => p.seleccionado);
+
+    seleccionados.forEach(item => {
+      // 🔹 Fake: solo actualizamos el estado y mostramos un console.log
+      this.carritoService.actualizarEstado(item.producto.id, nuevoEstado);
+      console.log(`Producto ${item.producto.nombre} marcado como ${nuevoEstado}`);
+    });
+    this.cerrarModalSeleccion();
+
+    alert(`Se realizó un pago ${tipoPago} para ${seleccionados.length} producto(s)`);
+  }
+
+  comprobanteVisible = false;
+  tipoPagoComprobante: 'parcial' | 'total' | null = null;
+  archivoComprobante: File | null = null;
+
+
+  cerrarModalSeleccion() {
+    this.modalSeleccionAbierto = false;
+    this.productosSeleccionados = [];
+    this.comprobanteVisible = false;
+    this.tipoPagoComprobante = null;
+    this.archivoComprobante = null;
   }
 
   getTotalSeleccion(): number {
@@ -116,22 +134,35 @@ export class SearchPage implements OnInit, OnDestroy {
       .filter(p => p.seleccionado)
       .reduce((sum, p) => sum + p.precioTotal, 0);
   }
-  procesarSeleccionados(tipoPago: 'parcial' | 'total') {
-  const nuevoEstado = tipoPago === 'parcial' ? 'Pago parcial' : 'Pago total';
 
-  const seleccionados = this.productosSeleccionados.filter(p => p.seleccionado);
+  mostrarComprobante(tipo: 'parcial' | 'total') {
+    this.tipoPagoComprobante = tipo;
+    this.comprobanteVisible = true;
+  }
 
-  seleccionados.forEach(item => {
-    // 🔹 Fake: solo actualizamos el estado y mostramos un console.log
-    this.carritoService.actualizarEstado(item.producto.id, nuevoEstado);
-    console.log(`Producto ${item.producto.nombre} marcado como ${nuevoEstado}`);
-  });
+  archivoSeleccionado(event: any) {
+    this.archivoComprobante = event.target.files[0] || null;
+  }
 
-  // Cerramos el modal simulando que ya se completó el pago
-  this.cerrarModalSeleccion();
+  confirmarComprobante() {
+    if (!this.archivoComprobante || !this.tipoPagoComprobante) {
+      alert('Debes seleccionar un archivo de comprobante.');
+      return;
+    }
 
-  // Opcional: mostrar un toast/fake alert
-  alert(`Se realizó un pago ${tipoPago} para ${seleccionados.length} producto(s)`);
-}
+    const nuevoEstado = this.tipoPagoComprobante === 'parcial' ? 'Pago parcial' : 'Pago total';
+    const seleccionados = this.productosSeleccionados.filter(p => p.seleccionado);
+    seleccionados.forEach(item => {
+      this.carritoService.actualizarEstado(item.producto.id, nuevoEstado);
+    });
+
+    alert(`Comprobante subido. Estado actualizado a ${nuevoEstado} para ${seleccionados.length} producto(s)`);
+
+    this.comprobanteVisible = false;
+    this.tipoPagoComprobante = null;
+    this.archivoComprobante = null;
+    this.cerrarModalSeleccion();
+  }
+
 
 }
