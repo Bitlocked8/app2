@@ -87,14 +87,18 @@ export class SearchPage implements OnInit, OnDestroy {
     this.productoSeleccionado = null;
   }
 
-  abrirModalSeleccion() {
-    this.productosSeleccionados = this.carrito.map(p => ({
+ abrirModalSeleccion() {
+  this.productosSeleccionados = this.carrito
+    .filter(p => p.estado === 'Añadido')  // solo los que aún no han sido pagados
+    .map(p => ({
       ...p,
       producto: { ...p.producto },
       seleccionado: true
     }));
-    this.modalSeleccionAbierto = true;
-  }
+
+  this.modalSeleccionAbierto = true;
+}
+
 
 
 
@@ -163,6 +167,34 @@ export class SearchPage implements OnInit, OnDestroy {
     this.archivoComprobante = null;
     this.cerrarModalSeleccion();
   }
+  abrirModalCompletarPago() {
+  const productosParciales = this.carrito
+    .filter(p => p.estado === 'Pago parcial')
+    .map(p => ({
+      ...p,
+      producto: { ...p.producto },
+      seleccionado: true
+    }));
+
+  // Aquí puedes reutilizar el mismo modal de selección, pero con otra lista
+  this.productosSeleccionados = productosParciales;
+  this.modalSeleccionAbierto = true;
+}
+modalHistorialAbierto = false;
+productosPagados: ItemCarrito[] = [];
+
+abrirModalHistorial() {
+  this.productosPagados = this.carrito.filter(p =>
+    p.estado === 'Pago parcial' || p.estado === 'Pago total'
+  );
+  this.modalHistorialAbierto = true;
+}
+
+cerrarModalHistorial() {
+  this.modalHistorialAbierto = false;
+  this.productosPagados = [];
+}
+
 
 
 }

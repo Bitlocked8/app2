@@ -8,6 +8,10 @@
   <ion-button *ngIf="carrito.length > 0" class="add-button" (click)="abrirModalSeleccion()">
     Ver Productos Seleccionables
   </ion-button>
+  <ion-button *ngIf="carrito.length > 0" class="add-button" (click)="abrirModalHistorial()">
+  Ver Historial de Pagos
+</ion-button>
+
   <!-- Lista de productos en carrito -->
   <ion-list class="custom-carrito-list" *ngIf="carrito.length > 0">
     <ion-item *ngFor="let item of carrito; let i = index" class="carrito-item">
@@ -67,57 +71,85 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal [isOpen]="modalSeleccionAbierto" (didDismiss)="cerrarModalSeleccion()" class="custom-modal">
-    <ng-template>
-      <div class="modal-container">
-        <ion-button fill="clear" class="close-btn" (click)="cerrarModalSeleccion()">✕</ion-button>
+ <ion-modal [isOpen]="modalSeleccionAbierto" (didDismiss)="cerrarModalSeleccion()" class="custom-modal">
+  <ng-template>
+    <div class="modal-container">
+      <ion-button fill="clear" class="close-btn" (click)="cerrarModalSeleccion()">✕</ion-button>
 
-        <div class="modal-content" *ngIf="productosSeleccionados.length > 0 && !comprobanteVisible">
-          <h2>Selecciona Productos</h2>
-
-          <ion-list class="custom-carrito-list">
-            <ion-item *ngFor="let item of productosSeleccionados" class="carrito-item">
-              <ion-checkbox slot="start" [(ngModel)]="item.seleccionado"></ion-checkbox>
-              <div class="producto-cantidad-total">
-                <p class="nombre">{{ item.producto.nombre ?? 'Producto sin nombre' }}</p>
-                <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
-                <p class="total">Total: ${{ item.precioTotal | number:'1.2-2' }}</p>
-              </div>
-            </ion-item>
-
-            <div class="producto-cantidad-total total-seleccion">
-              <p>Total seleccionado: ${{ getTotalSeleccion() | number:'1.2-2' }}</p>
+      <!-- Selección de productos -->
+      <div class="modal-content" *ngIf="productosSeleccionados.length > 0 && !comprobanteVisible">
+        <h2>Selecciona Productos</h2>
+        <ion-list class="custom-carrito-list">
+          <ion-item *ngFor="let item of productosSeleccionados" class="carrito-item">
+            <ion-checkbox slot="start" [(ngModel)]="item.seleccionado"></ion-checkbox>
+            <div class="producto-cantidad-total">
+              <p class="nombre">{{ item.producto.nombre ?? 'Producto sin nombre' }}</p>
+              <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
+              <p class="total">Total: ${{ item.precioTotal | number:'1.2-2' }}</p>
+              <p *ngIf="item.estado === 'Pago parcial'" class="estado-parcial">Pago Parcial</p>
             </div>
-          </ion-list>
+          </ion-item>
 
-          <!-- Botones de pago fake -->
-          <div class="acciones-pago">
-            <ion-button expand="full" color="warning" (click)="mostrarComprobante('parcial')">
-              Pagar Parcial (Fake)
-            </ion-button>
-
-            <ion-button expand="full" color="success" (click)="mostrarComprobante('total')">
-              Pagar Total (Fake)
-            </ion-button>
+          <div class="producto-cantidad-total total-seleccion">
+            <p>Total seleccionado: ${{ getTotalSeleccion() | number:'1.2-2' }}</p>
           </div>
-        </div>
+        </ion-list>
 
-        <!-- Subida de comprobante -->
-        <div *ngIf="comprobanteVisible" class="comprobante-container">
-          <h3>Subir comprobante para {{ tipoPagoComprobante === 'parcial' ? 'Pago Parcial' : 'Pago Total' }}</h3>
-          <input type="file" (change)="archivoSeleccionado($event)" />
-          <ion-button expand="full" color="primary" (click)="confirmarComprobante()">
-            Confirmar Comprobante
+        <!-- Botones de pago -->
+        <div class="acciones-pago">
+          <ion-button expand="full" color="warning" (click)="mostrarComprobante('parcial')">
+            Pagar Parcial
+          </ion-button>
+          <ion-button expand="full" color="success" (click)="mostrarComprobante('total')">
+            Pagar Total
           </ion-button>
         </div>
-
-        <!-- Si no hay productos -->
-        <div class="modal-content" *ngIf="productosSeleccionados.length === 0">
-          <p>No hay productos en el carrito.</p>
-        </div>
       </div>
-    </ng-template>
-  </ion-modal>
+
+      <!-- Subida de comprobante -->
+      <div *ngIf="comprobanteVisible" class="comprobante-container">
+        <h3>Subir comprobante para {{ tipoPagoComprobante === 'parcial' ? 'Pago Parcial' : 'Pago Total' }}</h3>
+        <input type="file" (change)="archivoSeleccionado($event)" />
+        <ion-button expand="full" color="primary" (click)="confirmarComprobante()">
+          Confirmar Comprobante
+        </ion-button>
+      </div>
+
+      <!-- No hay productos -->
+      <div class="modal-content" *ngIf="productosSeleccionados.length === 0">
+        <p>No hay productos disponibles para este tipo de pago.</p>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="modalHistorialAbierto" (didDismiss)="cerrarModalHistorial()" class="custom-modal">
+  <ng-template>
+    <div class="modal-container">
+      <ion-button fill="clear" class="close-btn" (click)="cerrarModalHistorial()">✕</ion-button>
+
+      <div class="modal-content" *ngIf="productosPagados.length > 0">
+        <h2>Historial de Pagos</h2>
+
+        <ion-list class="custom-carrito-list">
+          <ion-item *ngFor="let item of productosPagados" class="carrito-item">
+            <div class="producto-cantidad-total">
+              <p class="nombre">{{ item.producto.nombre ?? 'Producto sin nombre' }}</p>
+              <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
+              <p>Total: ${{ item.precioTotal | number:'1.2-2' }}</p>
+              <p>Estado: <strong>{{ item.estado }}</strong></p>
+              <p>Fecha: {{ item.fecha | date:'short' }}</p>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div *ngIf="productosPagados.length === 0">
+        <p>No hay pagos registrados todavía.</p>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
 
 
 </ion-content>
