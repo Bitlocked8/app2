@@ -8,6 +8,7 @@ export interface ItemCarrito {
   observaciones: string;
   precioTotal: number;
   fecha: Date;
+  estado?: 'Añadido' | 'Pago parcial' | 'Pago total' | 'Enviado' | 'Recibido';
 }
 
 @Injectable({

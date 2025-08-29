@@ -25,12 +25,7 @@ export class NotificacionesService {
    * Agrega una nueva notificación.
    * Si ya existe una del mismo producto y tipo 'carrito', acumula la cantidad.
    */
-  agregar(
-    mensaje: string,            // solo el nombre del producto
-    tipo: string = 'info',
-    cantidad: number = 1,
-    productoId?: number
-  ) {
+ agregar(mensaje: string, tipo: string, cantidad: number, productoId?: number) {
     if (productoId && tipo === 'carrito') {
       // Buscar si ya existe notificación de este producto
       const existente = this.notificaciones.find(

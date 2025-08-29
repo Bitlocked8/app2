@@ -194,7 +194,8 @@ export class ComprasPage implements OnInit, OnDestroy {
         cantidad: this.cantidad,
         observaciones: this.observaciones,
         precioTotal: this.calcularPrecioTotal(),
-        fecha: new Date()
+        fecha: new Date(),
+        estado: 'Añadido'  // <-- agregamos el estado inicial
       };
 
       this.carritoService.agregar(item);
@@ -211,6 +212,7 @@ export class ComprasPage implements OnInit, OnDestroy {
       this.cerrarModalProducto();
     }
   }
+
 
   // Obtener total del carrito
   getTotalCarrito(): number {
