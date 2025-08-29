@@ -5,7 +5,13 @@
     <p>No has añadido productos al carrito 😢</p>
     <ion-text color="medium">Explora productos y añade lo que más te guste.</ion-text>
   </div>
+ <ion-button 
+  *ngIf="carrito.length > 0" 
 
+   class="add-button"
+  (click)="abrirModalSeleccion()">
+  Ver Productos Seleccionables
+</ion-button>
   <!-- Lista de productos en carrito -->
   <ion-list class="custom-carrito-list" *ngIf="carrito.length > 0">
     <ion-item *ngFor="let item of carrito; let i = index" class="carrito-item">
@@ -64,5 +70,40 @@
       </div>
     </ng-template>
   </ion-modal>
+
+  <ion-modal [isOpen]="modalSeleccionAbierto" (didDismiss)="cerrarModalSeleccion()" class="custom-modal">
+    <ng-template>
+      <div class="modal-container">
+        <!-- Botón de cerrar -->
+        <ion-button fill="clear" class="close-btn" (click)="cerrarModalSeleccion()">✕</ion-button>
+
+        <!-- Contenido del modal -->
+        <div class="modal-content" *ngIf="productosSeleccionados.length > 0">
+          <h2>Selecciona Productos</h2>
+
+          <ion-list class="custom-carrito-list">
+            <ion-item *ngFor="let item of productosSeleccionados" class="carrito-item">
+              <ion-checkbox slot="start" [(ngModel)]="item.seleccionado"></ion-checkbox>
+              <div class="producto-cantidad-total">
+                <p class="nombre">{{ item.producto.nombre ?? 'Producto sin nombre' }}</p>
+                <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
+                <p class="total">Total: ${{ item.precioTotal | number:'1.2-2' }}</p>
+              </div>
+
+            </ion-item>
+            <div class="producto-cantidad-total total-seleccion">
+              <p>Total seleccionado: ${{ getTotalSeleccion() | number:'1.2-2' }}</p>
+            </div>
+          </ion-list>
+        </div>
+
+        <!-- Si no hay productos -->
+        <div class="modal-content" *ngIf="productosSeleccionados.length === 0">
+          <p>No hay productos en el carrito.</p>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
 
 </ion-content>

@@ -13,7 +13,8 @@ import {
   IonList,
   IonText,
   IonButton,
-  IonModal
+  IonModal,
+  IonCheckbox
 } from '@ionic/angular/standalone';
 
 import { CarritoService, ItemCarrito } from '../services/carrito.service';
@@ -37,7 +38,8 @@ import { NotificacionesService, Notificacion } from '../services/notificaciones.
     IonList,
     IonText,
     IonButton,
-    IonModal
+    IonModal,
+    IonCheckbox
   ],
 })
 export class SearchPage implements OnInit, OnDestroy {
@@ -48,13 +50,17 @@ export class SearchPage implements OnInit, OnDestroy {
   modalEnvioAbierto = false;
   productoSeleccionado: ItemCarrito | null = null;
 
+  // Modal de Selección de productos
+  modalSeleccionAbierto = false;
+  productosSeleccionados: (ItemCarrito & { seleccionado: boolean })[] = [];
+
   private carritoSub!: Subscription;
   private notiSub!: Subscription;
 
   constructor(
     private carritoService: CarritoService,
     private notiService: NotificacionesService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.carritoSub = this.carritoService.carrito$.subscribe(items => {
@@ -84,5 +90,30 @@ export class SearchPage implements OnInit, OnDestroy {
   cerrarModalEnvio() {
     this.modalEnvioAbierto = false;
     this.productoSeleccionado = null;
+  }
+
+  // Modal Selección de todos los productos
+  abrirModalSeleccion() {
+    this.productosSeleccionados = this.carrito.map(p => ({
+      ...p,
+      producto: { ...p.producto },
+      seleccionado: true
+    }));
+    this.modalSeleccionAbierto = true;
+  }
+
+  cerrarModalSeleccion() {
+    this.modalSeleccionAbierto = false;
+    this.productosSeleccionados = [];
+  }
+
+  toggleSeleccion(item: ItemCarrito & { seleccionado: boolean }) {
+    item.seleccionado = !item.seleccionado;
+  }
+
+  getTotalSeleccion(): number {
+    return this.productosSeleccionados
+      .filter(p => p.seleccionado)
+      .reduce((sum, p) => sum + p.precioTotal, 0);
   }
 }
