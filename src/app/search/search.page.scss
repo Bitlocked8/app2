@@ -49,7 +49,7 @@
   font-weight: bold;
   margin-top: 20px;
   font-size: 1rem;
- 
+
 }
 
 .custom-carrito-list {
@@ -212,6 +212,7 @@
     .modal-content {
       text-align: center;
 
+
       h2 {
         font-size: 1.5rem;
         font-weight: bold;
@@ -219,6 +220,36 @@
         margin-bottom: 20px;
         color: #10b4b1;
       }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        color: #10b4b1;
+      }
+
+      .file-input {
+        display: block;
+        margin: 12px auto;
+        padding: 10px 14px;
+        border: 2px dashed #10b4b1;
+        border-radius: 10px;
+        width: 90%;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: #ffffff;
+        color: #10b4b1;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          background: #e0f7fa;
+          border-color: #0d8e8b;
+        }
+      }
+
 
       /* Cantidad y Total */
       .producto-cantidad-total {
@@ -307,6 +338,7 @@
             .label {
               font-weight: bold;
               color: #10b4b1;
+               font-size: 10px;
             }
           }
         }

@@ -97,27 +97,28 @@
 
         <!-- Botones de pago -->
         <div class="acciones-pago">
-          <ion-button expand="full" color="warning" (click)="mostrarComprobante('parcial')">
+          <ion-button  class="add-button"  (click)="mostrarComprobante('parcial')">
             Pagar Parcial
           </ion-button>
-          <ion-button expand="full" color="success" (click)="mostrarComprobante('total')">
+          <ion-button  class="add-button" (click)="mostrarComprobante('total')">
             Pagar Total
           </ion-button>
         </div>
       </div>
 
       <!-- Subida de comprobante -->
-      <div *ngIf="comprobanteVisible" class="comprobante-container">
+      <div *ngIf="comprobanteVisible" class="modal-content">
         <h3>Subir comprobante para {{ tipoPagoComprobante === 'parcial' ? 'Pago Parcial' : 'Pago Total' }}</h3>
-        <input type="file" (change)="archivoSeleccionado($event)" />
-        <ion-button expand="full" color="primary" (click)="confirmarComprobante()">
+        <input type="file" class="file-input" (change)="archivoSeleccionado($event)" />
+
+        <ion-button expand="full" class="add-button"  (click)="confirmarComprobante()">
           Confirmar Comprobante
         </ion-button>
       </div>
 
       <!-- No hay productos -->
       <div class="modal-content" *ngIf="productosSeleccionados.length === 0">
-        <p>No hay productos disponibles para este tipo de pago.</p>
+        <h3>No hay productos disponibles para realizar el pago</h3>
       </div>
     </div>
   </ng-template>
@@ -144,8 +145,8 @@
         </ion-list>
       </div>
 
-      <div *ngIf="productosPagados.length === 0">
-        <p>No hay pagos registrados todavía.</p>
+      <div *ngIf="productosPagados.length === 0"  class="modal-content">
+        <h3>No hay pagos registrados todavía</h3>
       </div>
     </div>
   </ng-template>
