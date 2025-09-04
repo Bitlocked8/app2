@@ -10,24 +10,21 @@ import {
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { cart, search, logOut, home, water } from 'ionicons/icons';
-
-interface User {
-  email: string;
-  name: string;
-}
+import { AuthService } from '../services/auth.service'; // <- Importa el servicio
 
 @Component({
   selector: 'app-dashboard',
   styleUrls: ['./dashboard.page.scss'],
-  templateUrl: 'dashboard.page.html',
+  templateUrl: './dashboard.page.html',
   standalone: true,
   imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
 })
 export class DashboardPage {
   private alertCtrl = inject(AlertController);
   private router = inject(Router);
+  private authService = inject(AuthService); // <- Inyecta AuthService
 
-  user: User = { email: '', name: '' };
+  user: any = { email: '', name: '' };
 
   constructor() {
     addIcons({ cart, search, logOut, home, water });
@@ -36,20 +33,16 @@ export class DashboardPage {
   }
 
   private checkAuth() {
-    const authData = localStorage.getItem('fakeAuth');
-    if (!authData) {
+    if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/home'], { replaceUrl: true });
     } else {
-      this.user = JSON.parse(authData).user;
+      this.user = this.authService.getUser();
     }
   }
 
-  // 🔹 Evita volver atrás si hay sesión y estamos en dashboard
   @HostListener('window:popstate', ['$event'])
   onPopState(event: Event) {
-    const isAuthenticated = localStorage.getItem('fakeAuth') !== null;
-
-    if (this.router.url.startsWith('/dashboard') && isAuthenticated) {
+    if (this.router.url.startsWith('/dashboard') && this.authService.isAuthenticated()) {
       history.pushState(null, '', location.href);
     }
   }
@@ -58,23 +51,19 @@ export class DashboardPage {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar sesión',
       message: '¿Estás seguro de que quieres salir?',
-      cssClass: 'custom-alert', // <- Clase personalizada
+      cssClass: 'custom-alert',
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Salir',
+        { text: 'Cancelar', role: 'cancel' },
+        { 
+          text: 'Salir', 
           handler: () => {
-            localStorage.removeItem('fakeAuth');
+            this.authService.logout(); // <- Limpia token y user
             this.router.navigate(['/home'], { replaceUrl: true });
-          }
+          } 
         }
       ]
     });
 
     await alert.present();
   }
-
 }

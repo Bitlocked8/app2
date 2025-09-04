@@ -1,11 +1,10 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
 export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
-  
-  // Verifica si existe el token de autenticación falso
-  const isAuthenticated = localStorage.getItem('fakeAuth') !== null;
+  const authService = inject(AuthService);
 
-  return isAuthenticated || router.createUrlTree(['/home']);
+  return authService.isAuthenticated() || router.createUrlTree(['/home']);
 };

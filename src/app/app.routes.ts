@@ -6,11 +6,10 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () => import('./home/home.page').then(m => m.HomePage),
   },
-
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
-    canActivate: [authGuard], // 🔹 Protege el dashboard
+    canActivate: [authGuard],
     children: [
       {
         path: 'compras',
@@ -21,22 +20,20 @@ export const routes: Routes = [
         loadComponent: () => import('./search/search.page').then(m => m.SearchPage),
       },
       {
-        path: '', // Ruta por defecto del dashboard
+        path: '',
         redirectTo: 'compras',
         pathMatch: 'full'
       }
     ]
   },
-
   {
     path: '',
-    redirectTo: 'dashboard', // Página principal
+    redirectTo: 'home',
     pathMatch: 'full'
   },
-
   {
-    path: '**', // 🔹 Ruta para cualquier URL no encontrada
+    path: '**',
     redirectTo: 'home',
-    pathMatch: 'full',
-  },
+    pathMatch: 'full'
+  }
 ];

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Interfaz con los campos que devuelve tu API
 export interface Producto {
   id: number;
   nombre: string;
@@ -26,13 +25,15 @@ export interface Producto {
   providedIn: 'root'
 })
 export class ProductosService {
-  // 👉 aquí va la URL de tu API en Laravel
   private apiUrl = 'http://127.0.0.1:8000/api/productos';
 
   constructor(private http: HttpClient) {}
 
-  // Método para obtener la lista de productos
+  // Obtener productos incluyendo token
   getProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.apiUrl);
+    const token = localStorage.getItem('authToken'); // Token guardado después del login
+    const headers = token ? new HttpHeaders().set('Authorization', `Bearer ${token}`) : undefined;
+
+    return this.http.get<Producto[]>(this.apiUrl, { headers });
   }
 }
